@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:background="@color/black"
+    tools:context="cz.FCBcoders.holly6000.loginFragment">
+
+
+<androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="20dp"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="@color/cardview_dark_background"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/dialogFragmentTV"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textColor="@color/white"
+                android:textSize="12dp"
+                android:textAlignment="center"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/dialogFragmentET" />
+
+
+            <EditText
+                android:id="@+id/dialogFragmentET"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minEms="5"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="top|center_horizontal"
+
+                android:hint="@string/teamLoginET_string"
+
+                android:textColor="@color/white"
+                android:textSize="24dp"
+                android:textAlignment="center"
+
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialogFragmentTV"
+                app:layout_constraintBottom_toTopOf="@+id/dialogFragmentBtn" />
+
+            <Button
+                android:id="@+id/dialogFragmentBtn"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginTop="102dp"
+                android:layout_marginBottom="32dp"
+                android:textSize="20sp"
+
+                android:text="Login"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialogFragmentET"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
+
