@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/holly6000MonitorSV"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".Holly6000MonitorFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black">
+
+        <TextView
+            android:id="@+id/holly6000MonitorTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/holly6000_font_4"
+
+            android:gravity="bottom"
+
+            android:text=""
+            android:textColor="@color/green"
+            android:textSize="18sp"
+
+            android:visibility="gone"
+
+            app:layout_constrainedHeight="true"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="packed"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/holly6000MonitorPromptTV"
+
+            />
+
+
+        <TextView
+            android:id="@+id/holly6000MonitorPromptTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_red"
+
+            android:fontFamily="@font/holly6000_font_4"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/green"
+
+            android:textSize="18sp"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/holly6000MonitorTV"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

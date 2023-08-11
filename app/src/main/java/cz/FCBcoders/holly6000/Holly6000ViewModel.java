@@ -7,9 +7,11 @@ public class Holly6000ViewModel extends ViewModel {
    private String submittedPSW = "";
    private String nextPlanet = "";
    private String correctPlanetPSW = "";
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycby9ALif9w9x-18qVMPLJ5Nkz3RKp6kW-zU1hDKTuMg6SsJ_hew3COnENXlw7apct-1ptw/exec";
+   private boolean internetAvailable = false;
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwtVOAom7oz-BbbBPNOhB2hXJYS97ljfaEkr_OIQykwWe3_sX_zcWICiUV3jCkAahLKZA/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
+
 
    public String getTeamName() {
       return teamName;
@@ -43,6 +45,13 @@ public class Holly6000ViewModel extends ViewModel {
       this.correctPlanetPSW = correctPlanetPSW;
    }
 
+   public boolean isInternetAvailable() {
+      return internetAvailable;
+   }
+
+   public void setInternetAvailable(boolean internetAvailable) {
+      this.internetAvailable = internetAvailable;
+   }
    public String getAppScriptURL() {
       return appScriptURL;
    }

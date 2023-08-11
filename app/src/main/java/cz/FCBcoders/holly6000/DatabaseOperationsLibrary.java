@@ -1,7 +1,10 @@
 package cz.FCBcoders.holly6000;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -22,22 +25,13 @@ public class DatabaseOperationsLibrary {
    public static void writeToDatabase(FragmentActivity fragmentActivity, String appScriptURL, String team, String planet, DialogFragment currDialogFragment) {
 
       final ProgressDialog loading = ProgressDialog.show(fragmentActivity, "Adding Item", "Please wait");
-      //final String planetLogCodeTVtext = planetLogCodeET.getText().toString().trim();
-
 
       StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
               new Response.Listener<String>() {
                  @Override
                  public void onResponse(String response) {
                     loading.dismiss();
-                    //dismiss();
-
                     currDialogFragment.dismiss();
-
-                    //Toast.makeText(fragmentActivity, "Funkce z knihovny", Toast.LENGTH_LONG).show();
-                    //Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    //startActivity(intent);
-
                  }
               },
               new Response.ErrorListener() {
@@ -53,18 +47,8 @@ public class DatabaseOperationsLibrary {
 
             //here we pass params
             parmas.put("action", "logPlanet");
-            //parmas.put("action", "getLastPlanet");
             parmas.put("team", team);
             parmas.put("planet", planet);
-                /*String[][] planetCodes = holly6000ViewModel.getPlanetCodes();
-                byte i;
-                for (i=0;i<planetCodes[0].length;i++)
-                    if (planetCodes[0][i].equals(holly6000ViewModel.getNextPlanet())) {
-                        Log.d("Log Planet", "Porovnavam planetu "+planetCodes[0][i]);
-                        Log.d("Log Planet", "S planetou "+holly6000ViewModel.getNextPlanet());
-                        break;
-                    }
-                parmas.put("planet", planetCodes[0][i+1]);*/
 
             return parmas;
          }
@@ -79,6 +63,76 @@ public class DatabaseOperationsLibrary {
 
       queue.add(stringRequest);
 
+   }
+
+
+   public static void logTeam(FragmentActivity fragmentActivity, String appScriptURL, String team, String submittedPSW, DialogFragment currDialogFragment) {
+
+      final ProgressDialog loading =  ProgressDialog.show(fragmentActivity,"Loading","please wait",false,true);
+
+      StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
+              new Response.Listener<String>() {
+                 @Override
+                 public void onResponse(String response) {
+                    loading.dismiss();
+                    //Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+                    teamName(fragmentActivity, response);
+                 }
+              },
+
+              new Response.ErrorListener() {
+                 @Override
+                 public void onErrorResponse(VolleyError error) {
+
+                 }
+              }
+      ){
+         @Override
+         protected Map<String, String> getParams() {
+            Map<String, String> parmas = new HashMap<>();
+
+            //here we pass params
+            parmas.put("action", "logTeam");
+            parmas.put("teamPSW", submittedPSW);
+
+            return parmas;
+         }
+      };
+
+      int socketTimeOut = 50000;
+      RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+      stringRequest.setRetryPolicy(policy);
+
+      RequestQueue queue = Volley.newRequestQueue(fragmentActivity);
+      queue.add(stringRequest);
 
    }
+
+   private static void teamName(FragmentActivity fragmentActivity, String teamName) {
+
+      if(teamName.equals("Chybné PSW")) {
+         new AlertDialog.Builder(fragmentActivity)
+                 .setTitle("Chybné heslo!")
+                 .setMessage("Tebou zadané heslo neodpovídá žádnému týmu. Zkus to prosím znovu.")
+
+                 // Specifying a listener allows you to take an action before dismissing the dialog.
+                 // The dialog is automatically dismissed when a dialog button is clicked.
+                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                       //teamLoginET.setText("");
+                       //  teamLoginET.setHint(getResources().getString(R.string.teamLoginET_string));
+                    }
+                 })
+                 .setIcon(android.R.drawable.ic_dialog_alert)
+                 .show();
+      } else {
+         //holly6000ViewModel.setTeamName(teamName);
+         //holly6000ViewModel.setSubmittedPSW(submittedPSW);
+         //dismiss();
+      }
+
+   }
+
 }
+
