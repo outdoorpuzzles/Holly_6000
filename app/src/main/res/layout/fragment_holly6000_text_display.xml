@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:id="@+id/holly6000MonitorSV"
+    android:id="@+id/holly6000TextDisplaySV"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".Holly6000MonitorFragment">
+    tools:context=".Holly6000TextDisplayFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,11 +16,11 @@
         android:background="@color/black">
 
         <TextView
-            android:id="@+id/holly6000MonitorTV"
+            android:id="@+id/holly6000TextDisplayTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:fontFamily="@font/holly6000_font_4"
+            android:fontFamily="@font/holly6000_monitor_font"
 
             android:gravity="bottom"
 
@@ -37,18 +37,18 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/holly6000MonitorPromptTV"
+            app:layout_constraintBottom_toTopOf="@id/holly6000TextDisplayPromptTV"
 
             />
 
 
         <TextView
-            android:id="@+id/holly6000MonitorPromptTV"
+            android:id="@+id/holly6000TextDisplayPromptTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_red"
 
-            android:fontFamily="@font/holly6000_font_4"
+            android:fontFamily="@font/holly6000_monitor_font"
             android:maxLines="1"
             android:text=""
             android:textColor="@color/green"
@@ -57,7 +57,7 @@
 
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/holly6000MonitorTV"
+            app:layout_constraintTop_toBottomOf="@id/holly6000TextDisplayTV"
             app:layout_constraintBottom_toBottomOf="parent"
 
             />

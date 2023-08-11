@@ -19,4 +19,6 @@
     <string name="planetLoginTV_string">"Zadejte vstupní kód k planetě "</string>
     <string name="planetLoginET_string">Kód planety</string>
     <string name="planetLoginBtn_string">Log planet</string>
+
+    <string name="holly6000_monitor_caption">Holly 6000</string>
 </resources>

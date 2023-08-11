@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_old);
 
         videoView = (VideoView) findViewById(R.id.videoView);
 
@@ -116,15 +116,15 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
 
                 //Toast.makeText(getApplicationContext(),holly6000ViewModel.getTeamName(), Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getSupportFragmentManager();
-                Holly6000MonitorFragment holly6000MonitorFragment = (Holly6000MonitorFragment) fm.findFragmentById(R.id.fragmentContainerView);
+                Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentById(R.id.fragmentContainerView);
 
-                if (holly6000MonitorFragment != null && holly6000MonitorFragment.isVisible()) {
+                if (holly6000TextDisplayFragment != null && holly6000TextDisplayFragment.isVisible()) {
                     //Toast.makeText(getApplicationContext(),"Není NULL a je tam", Toast.LENGTH_SHORT).show();
-                    fm.beginTransaction().remove(holly6000MonitorFragment).commit();
+                    fm.beginTransaction().remove(holly6000TextDisplayFragment).commit();
                 } else {
                     //Toast.makeText(getApplicationContext(), "Je NULL nebo tam není", Toast.LENGTH_SHORT).show();
                     fm.beginTransaction()
-                            .replace(R.id.fragmentContainerView, Holly6000MonitorFragment.class, null, "Kuk")
+                            .replace(R.id.fragmentContainerView, Holly6000TextDisplayFragment.class, null, "Kuk")
                             .setReorderingAllowed(true)
                             .addToBackStack("Holly6000Monitor") // Name can be null
                             .commit();

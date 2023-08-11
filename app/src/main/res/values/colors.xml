@@ -7,4 +7,5 @@
     <color name="cardview_background_color">#A9ABB3</color>
     <color name="alert_dialog_button_text_color">#3F51B5</color>
     <color name="alert_dialog_background_color">#FFFBFE</color>
+    <color name="text_color">#CD2E2E</color>
 </resources>
