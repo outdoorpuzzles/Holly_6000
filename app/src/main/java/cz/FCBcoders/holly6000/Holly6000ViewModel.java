@@ -7,6 +7,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String submittedPSW = "";
    private String nextPlanet = "";
    private String correctPlanetPSW = "";
+   private String holly0000DisplayText = "yfkj kjky dd lji aff drtwe sfdfw";
    private boolean internetAvailable = false;
    private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwtVOAom7oz-BbbBPNOhB2hXJYS97ljfaEkr_OIQykwWe3_sX_zcWICiUV3jCkAahLKZA/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
@@ -43,6 +44,14 @@ public class Holly6000ViewModel extends ViewModel {
 
    public void setCorrectPlanetPSW(String correctPlanetPSW) {
       this.correctPlanetPSW = correctPlanetPSW;
+   }
+
+   public String getHolly0000DisplayText() {
+      return holly0000DisplayText;
+   }
+
+   public void setHolly0000DisplayText(String holly0000DisplayText) {
+      this.holly0000DisplayText = holly0000DisplayText;
    }
 
    public boolean isInternetAvailable() {

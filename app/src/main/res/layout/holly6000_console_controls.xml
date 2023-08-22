@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:padding="7dp"
+
+    android:background="@drawable/holly6000_console_item_background"
+
+    tools:showIn="@layout/holly6000_console">
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleRedSquareControl_1_Bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleRedSquareControl_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_red"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleRedSquareControl_1_Bg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleRedSquareControl_1_Bg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleRedSquareControl_1_Bg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleRedSquareControl_1_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueSquareControl_1_Bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleRedSquareControl_1_Bg"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleYellowSquareControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueSquareControl_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_blue"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleYellowSquareControlBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleRedSquareControl_2_Bg"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleYellowSquareControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_yellow"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleYellowSquareControlBg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleYellowSquareControlBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleYellowSquareControlBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleYellowSquareControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueSquareControl_2_Bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleRedSquareControl_1_Bg"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleGreenCircleControlBg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleGreenSquareControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueSquareControl_2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_blue"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleGreenSquareControlBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleBlueSquareControl_1_Bg"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleYellowCircleControlBg"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleRedSquareControl_2_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleGreenSquareControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_green"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleGreenSquareControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleRedSquareControl_2_Bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_square_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleYellowSquareControlBg"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleBlueCircleControlBg"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleRedSquareControl_2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_square_control_red"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleRedSquareControl_2_Bg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleRedSquareControl_2_Bg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleRedSquareControl_2_Bg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleRedSquareControl_2_Bg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleGreenCircleControlBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_circle_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleBlueSquareControl_2_Bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleYellowCircleControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleGreenCircleControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_circle_control_green"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleGreenCircleControlBg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleGreenCircleControlBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleGreenCircleControlBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleGreenCircleControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleYellowCircleControlBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_circle_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleGreenSquareControlBg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleGreenCircleControlBg"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleBlueCircleControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleYellowCircleControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_circle_control_yellow"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleYellowCircleControlBg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleYellowCircleControlBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleYellowCircleControlBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleYellowCircleControlBg"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueCircleControlBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_controls_circle_background"
+
+        android:layout_margin="2dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleRedSquareControl_2_Bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleYellowCircleControlBg"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleBlueCircleControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_circle_control_blue"
+
+        android:padding="3dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleBlueCircleControlBg"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleBlueCircleControlBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleBlueCircleControlBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleBlueCircleControlBg"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

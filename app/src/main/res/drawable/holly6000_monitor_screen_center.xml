@@ -3,6 +3,8 @@
     android:shape="rectangle">
 
     <solid
-        android:color="#534949"/>
+        android:color="@color/black"/>
 
 </shape>
+
+    <!--stará barva #534949-->

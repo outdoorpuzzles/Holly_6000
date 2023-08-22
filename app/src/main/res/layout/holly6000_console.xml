@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/holly6000_console_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/holly6000_console_background"
+
+    tools:showIn="@layout/activity_main">
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleRadarScannerBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_item_background"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleRadarScanner"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleRadarScanner"/>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/holly6000ConsoleRadarScanner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:src="@drawable/radar_scanner"
+
+        android:paddingHorizontal="5dp"
+
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="5dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleSmallHolly6000Monitor" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleSmallHolly6000Monitor"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H,4:3"
+
+        android:src="@drawable/holly6000_console_item_background"
+
+        android:clickable="true"
+        android:focusable="true"
+
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleRadarScanner"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleArtificialHorizon" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleHolly6000Head"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_head"
+
+        android:layout_margin="5dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleSmallHolly6000Monitor"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleArtificialHorizonBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_item_background"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleArtificialHorizon"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleArtificialHorizon"/>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/holly6000ConsoleArtificialHorizon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="5dp"
+
+        android:layout_marginTop="5dp"
+
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:paddingHorizontal="5dp"
+        android:src="@drawable/artificial_horizon"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleIntercom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+
+        android:src="@drawable/holly6000_console_intercom"
+
+        android:layout_marginStart="10dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleControls"/>
+
+    <include
+        android:id="@+id/holly6000ConsoleControls"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        layout="@layout/holly6000_console_controls"
+
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleSmallHolly6000Monitor"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleDigitDisplayBg" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleDigitDisplayBg"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_item_background"
+
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleControls"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleJoystick"/>
+    
+    <TextView
+        android:id="@+id/holly6000ConsoleDigitDisplay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:text="0000"
+        app:autoSizeTextType="uniform"
+        android:textColor="@color/green"
+        android:fontFamily="@font/digital_font"
+        android:gravity="bottom|center_horizontal"
+
+        android:paddingTop="10dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleDigitDisplayBg"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleGreenBar"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleDigitDisplayBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleDigitDisplayBg" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleGreenBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/green_gradient_circle"
+
+        android:padding="10dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleDigitDisplay"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleDigitDisplayBg"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleDigitDisplayBg"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleDigitDisplayBg" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleJoystickBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_item_background"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleJoystick"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleJoystick"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleJoystick"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_joystick_png"
+
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleDigitDisplayBg"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleButtonGroup1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:src="@drawable/holly6000_console_button_group"
+
+        android:layout_margin="10dp"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleIntercom"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleButtonGroup1Img"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+
+        android:src="@drawable/icon_saturn"
+        android:background="@color/very_dark_silver"
+
+        android:padding="5dp"
+
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleLogPlanetBtn"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleLogPlanetBtn"
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleHelpRequestBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleLogPlanetBtn"
+        style="@style/imageButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:layout_marginVertical="0dp"
+
+        android:src="@drawable/icon_log_planet"
+
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSolutionRequestBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleHelpRequestBtn"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSolutionRequestBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleHelpRequestBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_help_request"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleLogPlanetBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleSolutionRequestBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleSolutionRequestBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_solution_request"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleHelpRequestBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleSolutionBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleSolutionBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_solution"
+
+        android:layout_marginVertical="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleSolutionRequestBtn"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleSolutionRequestBtn"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleSolutionRequestBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleBCodeBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleBCodeBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_b_code"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleSolutionBtn"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleButtonGroup1" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleNavigationBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_navigation"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleTreasureHelpRequestBtn" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleButtonGroup2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:layout_margin="10dp"
+
+        android:src="@drawable/holly6000_console_button_group"
+
+        app:layout_constraintTop_toBottomOf="@id/holly6000ConsoleButtonGroup1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleNavigationBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleHollysJokesBtn" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleButtonGroup2ImgBg"
+        android:layout_width="35dp"
+        android:layout_height="25dp"
+
+        android:background="@color/very_dark_silver"
+
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleTreasureHelpRequestBtn"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleTreasureHelpRequestBtn"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleTreasureHelpRequestBtn" />
+
+    <ImageView
+        android:id="@+id/holly6000ConsoleButtonGroup2Img"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+
+        android:src="@drawable/icon_treasure"
+
+        app:layout_constraintStart_toStartOf="@id/holly6000ConsoleTreasureHelpRequestBtn"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleTreasureHelpRequestBtn"
+        app:layout_constraintBottom_toTopOf="@id/holly6000ConsoleTreasureHelpRequestBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleTreasureHelpRequestBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_help_request"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleNavigationBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleTreasureSolutionBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleTreasureSolutionBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_solution"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleTreasureHelpRequestBtn"
+        app:layout_constraintEnd_toStartOf="@id/holly6000ConsoleLogTreasureBtn" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleLogTreasureBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_log_treasure"
+
+        android:padding="8dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleButtonGroup2"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleTreasureSolutionBtn"
+        app:layout_constraintEnd_toEndOf="@id/holly6000ConsoleButtonGroup2" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/holly6000ConsoleHollysJokesBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/imageButton"
+
+        android:src="@drawable/icon_present"
+
+        android:layout_marginVertical="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/holly6000ConsoleLogTreasureBtn"
+        app:layout_constraintBottom_toBottomOf="@id/holly6000ConsoleLogTreasureBtn"
+        app:layout_constraintStart_toEndOf="@id/holly6000ConsoleLogTreasureBtn"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

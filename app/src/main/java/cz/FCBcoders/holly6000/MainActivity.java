@@ -5,25 +5,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -35,98 +39,84 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
-    private VideoView videoView = null;
-    private Button logStanovisteBtn, napovedaBtn, reseniBtn;
-    private TextView logInstructionsTV;
-    private EditText planetLogCodeET;
+public class MainActivity extends AppCompatActivity {
     private boolean hollyMsg = true;
     private final int FINISH_APP_TIME_INTERVAL = 2000;
     private long mLastBackPressedTime;
-
+    Handler digitDisplayHandler = null;
+    Runnable digitDisplayRunnable = null;
     Holly6000ViewModel holly6000ViewModel;
     private String appScriptURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_old);
+        setContentView(R.layout.activity_main);
 
-        videoView = (VideoView) findViewById(R.id.videoView);
+        Button logStanovisteBtn = (Button) findViewById(R.id.logStanovisteBtn);
+        Button napovedaBtn = (Button) findViewById(R.id.napovedaBtn);
+        Button reseniBtn = (Button) findViewById(R.id.reseniBtn);
 
-        logStanovisteBtn = (Button) findViewById(R.id.logStanovisteBtn);
-        napovedaBtn = (Button) findViewById(R.id.napovedaBtn);
-        reseniBtn = (Button) findViewById(R.id.reseniBtn);
-        logInstructionsTV = (TextView) findViewById(R.id.logInstructionsTV);
-        planetLogCodeET = (EditText) findViewById(R.id.planetLogCodeTV);
+        ImageView smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
 
         holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
         appScriptURL = holly6000ViewModel.getAppScriptURL();
 
-        FragmentManager fm = getSupportFragmentManager();
-        TeamLoginDialogFragment teamLoginDialogFragment = new TeamLoginDialogFragment();
-        //teamLoginDialogFragment.show(fm, "Team Login Dialog Fragment");
-        reseniBtn.setVisibility(View.VISIBLE);
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                logStanovisteBtn.setVisibility(View.VISIBLE);
-                napovedaBtn.setVisibility(View.VISIBLE);
-                reseniBtn.setVisibility(View.VISIBLE);
+        animateHolly6000ConsoleItems();
 
-                //videoView.setVisibility(View.INVISIBLE);
-                //planetLogCodeET.setVisibility(View.VISIBLE);
+        AppCompatImageButton logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
+        logPlanetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                        R.animator.holly6000_console_controls_animator);
+                set.setTarget(findViewById(R.id.holly6000ConsoleRedSquareControl_1));
+                set.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(@NonNull Animator animator) {
+
+                    }
+                    @Override
+                    public void onAnimationEnd(@NonNull Animator animator) {
+                        set.start();
+                    }
+                    @Override
+                    public void onAnimationCancel(@NonNull Animator animator) {
+
+                    }
+                    @Override
+                    public void onAnimationRepeat(@NonNull Animator animator) {
+
+                    }
+                });
+                set.start();*/
             }
         });
 
-        //final MediaController mediaController = new MediaController(MainActivity.this, true);
-        //mediaController.setEnabled(false);
-        //videoView.setMediaController(mediaController);
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.holly2));
-        //videoView.start();
-
-        /*videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaController.setEnabled(true);
-            }
-        });*/
-
-        logStanovisteBtn.setOnClickListener(new View.OnClickListener() {
+        smallHolly6000Monitor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(getApplicationContext(),"Tlačítko zmáčknuto", Toast.LENGTH_SHORT).show();
-                getLastPlanet();
-            }
-        });
-
-        /*napovedaBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"Tlačítko zmáčknuto", Toast.LENGTH_SHORT).show();
-                writeToDatabase();
-            }
-        });*/
-
-        reseniBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //Toast.makeText(getApplicationContext(),holly6000ViewModel.getTeamName(), Toast.LENGTH_SHORT).show();
                 FragmentManager fm = getSupportFragmentManager();
-                Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentById(R.id.fragmentContainerView);
+                Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
 
-                if (holly6000TextDisplayFragment != null && holly6000TextDisplayFragment.isVisible()) {
-                    //Toast.makeText(getApplicationContext(),"Není NULL a je tam", Toast.LENGTH_SHORT).show();
-                    fm.beginTransaction().remove(holly6000TextDisplayFragment).commit();
-                } else {
-                    //Toast.makeText(getApplicationContext(), "Je NULL nebo tam není", Toast.LENGTH_SHORT).show();
+                if (holly6000VideoFragment != null && holly6000VideoFragment.isVisible()) {
                     fm.beginTransaction()
-                            .replace(R.id.fragmentContainerView, Holly6000TextDisplayFragment.class, null, "Kuk")
+                            .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
                             .setReorderingAllowed(true)
-                            .addToBackStack("Holly6000Monitor") // Name can be null
+                            .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
+                            .commit();
+                } else {
+                    fm.beginTransaction()
+                            .replace(R.id.holly6000_monitor_fragment_container, Holly6000VideoFragment.class, null, "Holly6000VideoFragment")
+                            .setReorderingAllowed(true)
+                            .addToBackStack("Holly6000VideoFragment") // Name can be null
                             .commit();
                 }
             }
@@ -157,31 +147,6 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
                 (ConnectivityManager) getSystemService(ConnectivityManager.class);
         connectivityManager.requestNetwork(networkRequest, networkCallback);
 
-        /*final OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Toast.makeText(getBaseContext(), "Holly 6000 termination", Toast.LENGTH_LONG).show();
-                new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.myDialog))
-                        .setTitle("Holly 6000 termination")
-                        .setMessage("Opravdu chcete ukončit Holly 6000?")
-                        .setPositiveButton("Ano", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finishAndRemoveTask();
-                            }
-                        })
-                        .setNegativeButton("Ukončit Holly 6000", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        };
-        this.getOnBackPressedDispatcher().addCallback(this, callback);*/
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -196,6 +161,36 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
         };
         this.getOnBackPressedDispatcher().addCallback(this, callback);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        runConsoleDigitDisplay();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        /*Hiding Status Bar*/
+        View decorView = getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+        // Remember that you should never show the action bar if the
+        // status bar is hidden, so hide that too if necessary.
+        //ActionBar actionBar = getActionBar();
+        //actionBar.hide();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (digitDisplayRunnable != null)
+            digitDisplayHandler.removeCallbacks(digitDisplayRunnable);
     }
 
     private void getLastPlanet() {
@@ -290,20 +285,7 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
 
     }
 
-    private void displayLogInstructions(String lastPlanet) {
-        /*byte lastPlanetNum;
-
-        for (lastPlanetNum=0; lastPlanetNum<planetCodes.length; lastPlanetNum++) {
-            if(planetCodes[0][lastPlanetNum].equals(lastPlanet))
-                break;
-        }*/
-        if (lastPlanet.equals("Planeta nenalezena"))
-            lastPlanet = holly6000ViewModel.getPlanetCodes()[0][0];
-        String logInstructionsText = "Zadejte vstupní kód k planetě\n" + lastPlanet;//planetCodes[0][lastPlanetNum+1];
-        logInstructionsTV.setText(logInstructionsText);
-        logInstructionsTV.setVisibility(View.VISIBLE);
-    }
-
+    //private void writeToDatabase() {
     /*private void writeToDatabase() {
 
         final ProgressDialog loading = ProgressDialog.show(this, "Adding Item", "Please wait");
@@ -387,54 +369,248 @@ public class MainActivity extends AppCompatActivity implements DialogInterface.O
                 .show();
     }
 
-    @Override
-    public void onDismiss(final DialogInterface dialog) {
-        //Fragment dialog had been dismissed
-        //videoView.start();
-        //Toast.makeText(MainActivity.this, "Ted se melo pustit video", Toast.LENGTH_LONG).show();
+    public void animateHolly6000ConsoleItems()
+    {
+        // Console controls animations
+        /*ImageView holly6000ConsoleRedSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleRedSquareControl_1);
+        ImageView holly6000ConsoleBlueSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleBlueSquareControl_1);
+
+        Animation holly6000ConsoleRedSquareControl_1Animation = AnimationUtils.loadAnimation(this, R.anim.holly6000_console_controls_animation);
+        Animation holly6000ConsoleBlueSquareControl_1Animation = AnimationUtils.loadAnimation(this, R.anim.holly6000_console_controls_animation);
+
+        holly6000ConsoleRedSquareControl_1Animation.setStartOffset(3000);
+        holly6000ConsoleBlueSquareControl_1Animation.setStartOffset(500);
+
+        holly6000ConsoleRedSquareControl_1.startAnimation(holly6000ConsoleRedSquareControl_1Animation);
+        holly6000ConsoleBlueSquareControl_1.startAnimation(holly6000ConsoleBlueSquareControl_1Animation);*/
+
+        // Console controls animators
+        AnimatorSet holly6000ConsoleRedSquareControl_1_AS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_red_square_1);
+         holly6000ConsoleRedSquareControl_1_AS.setTarget(findViewById(R.id.holly6000ConsoleRedSquareControl_1));
+         holly6000ConsoleRedSquareControl_1_AS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                 holly6000ConsoleRedSquareControl_1_AS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+         holly6000ConsoleRedSquareControl_1_AS.start();
+
+        AnimatorSet holly6000ConsoleRedSquareControl_2_AS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_red_square_2);
+        holly6000ConsoleRedSquareControl_2_AS.setTarget(findViewById(R.id.holly6000ConsoleRedSquareControl_2));
+        holly6000ConsoleRedSquareControl_2_AS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleRedSquareControl_2_AS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleRedSquareControl_2_AS.start();
+
+        AnimatorSet holly6000ConsoleBlueSquareControl_1_AS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_blue_square_1);
+        holly6000ConsoleBlueSquareControl_1_AS.setTarget(findViewById(R.id.holly6000ConsoleBlueSquareControl_1));
+        holly6000ConsoleBlueSquareControl_1_AS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleBlueSquareControl_1_AS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleBlueSquareControl_1_AS.start();
+
+        AnimatorSet holly6000ConsoleBlueSquareControl_2_AS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_blue_square_2);
+        holly6000ConsoleBlueSquareControl_2_AS.setTarget(findViewById(R.id.holly6000ConsoleBlueSquareControl_2));
+        holly6000ConsoleBlueSquareControl_2_AS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleBlueSquareControl_2_AS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleBlueSquareControl_2_AS.start();
+
+        AnimatorSet holly6000ConsoleGreenSquareControlAS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_green_square);
+        holly6000ConsoleGreenSquareControlAS.setTarget(findViewById(R.id.holly6000ConsoleGreenSquareControl));
+        holly6000ConsoleGreenSquareControlAS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleGreenSquareControlAS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleGreenSquareControlAS.start();
+
+        AnimatorSet holly6000ConsoleYellowSquareControlAS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_yellow_square);
+        holly6000ConsoleYellowSquareControlAS.setTarget(findViewById(R.id.holly6000ConsoleYellowSquareControl));
+        holly6000ConsoleYellowSquareControlAS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleYellowSquareControlAS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleYellowSquareControlAS.start();
+
+        AnimatorSet holly6000ConsoleBlueCircleControlAS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_blue_circle);
+        holly6000ConsoleBlueCircleControlAS.setTarget(findViewById(R.id.holly6000ConsoleBlueCircleControl));
+        holly6000ConsoleBlueCircleControlAS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleBlueCircleControlAS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleBlueCircleControlAS.start();
+
+        AnimatorSet holly6000ConsoleGreenCircleControlAS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_green_circle);
+        holly6000ConsoleGreenCircleControlAS.setTarget(findViewById(R.id.holly6000ConsoleGreenCircleControl));
+        holly6000ConsoleGreenCircleControlAS.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleGreenCircleControlAS.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleGreenCircleControlAS.start();
+
+        AnimatorSet holly6000ConsoleYellowCircleControl = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_yellow_circle);
+        holly6000ConsoleYellowCircleControl.setTarget(findViewById(R.id.holly6000ConsoleYellowCircleControl));
+        holly6000ConsoleYellowCircleControl.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationEnd(@NonNull Animator animator) {
+                holly6000ConsoleYellowCircleControl.start();
+            }
+            @Override
+            public void onAnimationCancel(@NonNull Animator animator) {
+
+            }
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animator) {
+
+            }
+        });
+        holly6000ConsoleYellowCircleControl.start();
+
+
+        //Console Green Bar animation
+        ImageView holly6000ConsoleGreenBar = (ImageView) findViewById(R.id.holly6000ConsoleGreenBar);
+        Animation holly6000ConsoleGreenBarAnimation = AnimationUtils.loadAnimation(this, R.anim.holly6000_console_green_bar_animation);
+        holly6000ConsoleGreenBar.startAnimation(holly6000ConsoleGreenBarAnimation);
     }
 
-    /*@Override
-    public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
-        Log.d("Log_Key", "Stisknuta klávesa "+keyCode);
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d("Log_Key", "Stisknuta klávesa ZPĚT");
-            Toast.makeText(getBaseContext(), "Holly 6000 termination", Toast.LENGTH_LONG).show();
-            /*new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.myDialog))
-                    .setTitle("Holly 6000 termination")
-                    .setMessage("Opravdu chcete ukončit Holly 6000?")
-                    .setPositiveButton("Ano", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            finishAndRemoveTask();
-                        }
-                    })
-                    .setNegativeButton("Ukončit Holly 6000", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();*/
-
-
-       /*} else {
-            Toast.makeText(getBaseContext(), "Kuk", Toast.LENGTH_LONG).show();
-        }
-
-        return true;
-    }*/
-
-    /*@Override
-    public void onBackPressed() {
-        if (mLastBackPressedTime + FINISH_APP_TIME_INTERVAL < System.currentTimeMillis()) {
-            Toast.makeText(this, "Opětovným stiskem zpět ukončíte aplikaci Holly 6000", Toast.LENGTH_SHORT).show();
-        } else {
-            //super.onBackPressed();
-            finish();
-            System.exit(0);
-        }
-        mLastBackPressedTime = System.currentTimeMillis();
-    }*/
+    public void runConsoleDigitDisplay() {
+        Random random = new Random();
+        TextView holly6000ConsoleDigitDisplayTV = (TextView) findViewById(R.id.holly6000ConsoleDigitDisplay);
+        /*ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate
+                (new Runnable() {
+                    public void run() {
+                        holly6000ConsoleDigitDisplayTV.setText(String.format(Locale.GERMANY, "%04d", random.nextInt(10000)));
+                    }
+                }, 0, 2, TimeUnit.SECONDS);*/
+        final int[] randomNumberForDigitDisplay = new int[1];
+        digitDisplayHandler = new Handler();
+        digitDisplayRunnable = new Runnable() {
+            @Override
+            public void run() {
+                randomNumberForDigitDisplay[0] = random.nextInt(10000);
+                holly6000ConsoleDigitDisplayTV.setText(String.format(Locale.GERMANY, "%04d", randomNumberForDigitDisplay[0]));
+                digitDisplayHandler.postDelayed(digitDisplayRunnable, randomNumberForDigitDisplay[0]);
+            }
+        };
+        digitDisplayHandler.removeCallbacks(digitDisplayRunnable);
+        digitDisplayHandler.post(digitDisplayRunnable);
+    }
 }

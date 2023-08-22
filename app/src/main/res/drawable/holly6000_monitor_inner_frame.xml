@@ -12,3 +12,10 @@
 
 
 </shape>
+
+    <!--staré barvy
+        android:type="radial"
+        android:gradientRadius="400dp"
+        android:startColor="#403939"
+        android:endColor="#191717"
+    -->

@@ -3,9 +3,19 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#16F016</color>
+    <color name="red">#FF0000</color>
     <color name="light_red">#F6A6A6</color>
+    <color name="silver">#DFDFDF</color>
+    <color name="dark_silver">#6C7A86</color>
+    <color name="very_dark_silver">#4A4F53</color>
+    <color name="very_very_dark_silver">#373E42</color>
+    <color name="green_control">#27C127</color>
+    <color name="red_control">#FF0000</color>
+    <color name="blue_control">#0096FF</color>
+    <color name="yellow_control">#FFEA00</color>
+    <color name="text_color">#FA0202</color>
+    <color name="holly6000_monitor_caption_color">#CD2E2E</color>
     <color name="cardview_background_color">#A9ABB3</color>
     <color name="alert_dialog_button_text_color">#3F51B5</color>
     <color name="alert_dialog_background_color">#FFFBFE</color>
-    <color name="text_color">#CD2E2E</color>
 </resources>

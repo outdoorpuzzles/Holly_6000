@@ -6,18 +6,22 @@ import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 public class Holly6000TextDisplayFragment extends Fragment {
     int mIndex = 0;
     int lastNewLineStart = 0;
     Runnable characterAdder = null;
     Handler mHandler = null;
+    String holly0000DisplayTextWithNewLine;
+    Holly6000ViewModel holly6000ViewModel;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -64,16 +68,19 @@ public class Holly6000TextDisplayFragment extends Fragment {
         //Toast.makeText(getActivity(),"Fragment zobrazen", Toast.LENGTH_SHORT).show();
 
         TextView holly6000TextDisplayTV = (TextView) view.findViewById(R.id.holly6000TextDisplayTV);
-        TextView holly6000PromptTV = (TextView) view.findViewById(R.id.holly6000TextDisplayPromptTV);
+        TextView holly6000PromptTV = (TextView) view.findViewById(R.id.holly6000PromptTV);
+        EditText holly6000PromptET = (EditText) view.findViewById(R.id.holly6000PromptET);
         ScrollView holly6000TextDisplaySV = (ScrollView) view.findViewById(R.id.holly6000TextDisplaySV);
+
+        holly6000ViewModel = new ViewModelProvider(requireActivity()).get(Holly6000ViewModel.class);
 
         holly6000TextDisplayTV.post(new Runnable() {
             @Override
             public void run() {
-                //retroComputerTextAnimation(holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
+                retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, holly6000PromptET, "Kubikula", "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
                 //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... abcdefghijklmnopqrstuvwxyz Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
                 //retroComputerTextAnimation(holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
-                retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "kuk bude sfghs Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer vulputate sem a nibh rutrum consequat. Suspendisse sagittis ultrices augue. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Mauris tincidunt sem sed arcu. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis. Etiam posuere lacus quis dolor. Suspendisse nisl. Duis viverra diam non justo. Pellentesque arcu. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. In enim a arcu imperdiet malesuada. Aliquam ante.");
+                //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "Kuba Kubikula","kuk bude sfghs Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer vulputate sem a nibh rutrum consequat. Suspendisse sagittis ultrices augue. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Mauris tincidunt sem sed arcu. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis. Etiam posuere lacus quis dolor. Suspendisse nisl. Duis viverra diam non justo. Pellentesque arcu. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. In enim a arcu imperdiet malesuada. Aliquam ante.");
             }
         });
         //holly6000TextDisplayTV.setText("Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
@@ -92,17 +99,35 @@ public class Holly6000TextDisplayFragment extends Fragment {
         return view;
     }
 
-    public void retroComputerTextAnimation(ScrollView TextDisplaySV, TextView TextDisplayTV, TextView promptTV, String message) {
-        long mDelay = 50;
+    public void retroComputerTextAnimation(ScrollView textDisplaySV, TextView textDisplayTV, TextView promptTV, EditText promptET, String jmenoTymu, String message) {
+        long mDelay = 100;
         int firstCursorBlinks = 3;
 
         String startingText = "Holly 6000> ";
         int startingTextLength = startingText.length();
         promptTV.setText(startingText);
 
-        /*TextPaint textPaint = TextDisplayTV.getPaint();
+        ViewGroup.LayoutParams params = promptTV.getLayoutParams();
+        params.width = 0;
+        promptTV.setLayoutParams(params);
+        promptET.setVisibility(View.GONE);
+
+        String holly0000DisplayText = holly6000ViewModel.getHolly0000DisplayText();
+        if (!holly0000DisplayText.equals(""))
+            holly6000ViewModel.setHolly0000DisplayText(holly0000DisplayText + "\n" + startingText + message);
+        else
+            holly6000ViewModel.setHolly0000DisplayText(startingText + message);
+
+        if (!holly0000DisplayText.equals("")) {
+            textDisplayTV.setVisibility(View.VISIBLE);
+            textDisplayTV.setText(holly0000DisplayText);
+            textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
+        }
+
+
+        /*TextPaint textPaint = textDisplayTV.getPaint();
         int letterWidth = (int) textPaint.measureText("a");
-        int textViewWidth = TextDisplayTV.getWidth();*/
+        int textViewWidth = textDisplayTV.getWidth();*/
         TextPaint textPaint = promptTV.getPaint();
         int letterWidth = (int) textPaint.measureText("a");
         int textViewWidth = promptTV.getWidth();
@@ -140,22 +165,28 @@ public class Holly6000TextDisplayFragment extends Fragment {
             public void run() {
                 String promptTVText = promptTV.getText().toString();
                 if (Character.compare(wholeMessageWithBreakLines.charAt(mIndex), '\n') == 0) {
-                    if (TextDisplayTV.getVisibility() == View.GONE)
-                        TextDisplayTV.setVisibility(View.VISIBLE);
-                    TextDisplayTV.setText(wholeMessageWithBreakLines.subSequence(0,  mIndex++));
+                    if (textDisplayTV.getVisibility() == View.GONE)
+                        textDisplayTV.setVisibility(View.VISIBLE);
+                    if (!holly0000DisplayText.equals(""))
+                        holly0000DisplayTextWithNewLine = holly0000DisplayText + "\n" + wholeMessageWithBreakLines.subSequence(0,  mIndex++);
+                    else
+                        holly0000DisplayTextWithNewLine = wholeMessageWithBreakLines.subSequence(0,  mIndex++).toString();
+                    textDisplayTV.setText(holly0000DisplayTextWithNewLine);
 
-                    TextDisplaySV.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextDisplaySV.fullScroll(View.FOCUS_DOWN);
-                        }
-                    });
+                    textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
 
                     if (mIndex < wholeMessageWithBreakLines.length()) {
                         promptTVText = "_";
                         promptTV.setText(promptTVText);
                     } else {
-                        promptTV.setText("");
+                        promptTVText = jmenoTymu + "> ";
+                        promptTV.setText(promptTVText);
+
+                        ViewGroup.LayoutParams params = promptTV.getLayoutParams();
+                        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        promptTV.setLayoutParams(params);
+                        promptET.setVisibility(View.VISIBLE);
+
                         return;
                     }
                 }
