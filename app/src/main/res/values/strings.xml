@@ -1,16 +1,5 @@
 <resources>
     <string name="app_name">Holly 6000</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="teamLoginTV_string">Vložte kód týmu</string>
     <string name="teamLoginET_string">Kód týmu</string>
@@ -20,5 +9,15 @@
     <string name="planetLoginET_string">Kód planety</string>
     <string name="planetLoginBtn_string">Log planet</string>
 
+    <string name="holly6000_monitor_holly_prompt">"Holly 6000&gt; "</string>
+    <string name="holly6000_monitor_data_loading">&lt;ODESÍLÁM DATA&gt;</string>
+    <string name="holly6000_monitor_data_loaded">&lt;DATA ODESLÁNA&gt;</string>
+    <string name="holly6000_monitor_planet_logged">Planeta úspěšně zalogována</string>
+
+    <string name="planetLoginText">"Zadejte vstupní kód k planetě "</string>
+    <string name="invalidPlanetCodeText">"Vámi zadaný kód není platný vstupní kód k planetě "</string>
+
     <string name="holly6000_monitor_caption">Holly 6000</string>
+
+    <string name="app_exit_warning">"Opětovným stiskem zpět ukončíte aplikaci Holly 6000"</string>
 </resources>

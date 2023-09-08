@@ -48,57 +48,76 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private boolean hollyMsg = true;
+    public static final int PLANET_NAME_COLUMN = 0;
+    public static final int COORDINATES_COLUMN = 1;
+    public static final int PLANET_CODE_COLUMN = 2;
+    public static final int HELP_COLUMN = 3;
+    public static final int SOLUTION_COLUMN = 4;
+    public static final int B_CODE_COLUMN = 5;
+    public static final int ACTION_LOG_PLANET = 0;
+    public static final int ACTION_REQUEST_HELP = 1;
+    public static final int ACTION_REGUEST_SOLUTION = 2;
+    public static final int ACTION_COMMIT_SOLUTION = 3;
+    public static final int ACTION_COMMIT_B_CODE = 4;
+    public static final int ACTION_GET_COORDINATES = 5;
+    public static final int ACTION_REQUEST_TREASURE_HELP = 6;
+    public static final int ACTION_COMMIT_TREASURE_SOLUTION = 7;
+    public static final int ACTION_LOG_TREASURE = 8;
+    public static final int ACTION_GET_NEWS = 9;
+
     private final int FINISH_APP_TIME_INTERVAL = 2000;
     private long mLastBackPressedTime;
     Handler digitDisplayHandler = null;
     Runnable digitDisplayRunnable = null;
     Holly6000ViewModel holly6000ViewModel;
-    private String appScriptURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button logStanovisteBtn = (Button) findViewById(R.id.logStanovisteBtn);
-        Button napovedaBtn = (Button) findViewById(R.id.napovedaBtn);
-        Button reseniBtn = (Button) findViewById(R.id.reseniBtn);
-
-        ImageView smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
-
-        holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
-        appScriptURL = holly6000ViewModel.getAppScriptURL();
-
-        animateHolly6000ConsoleItems();
-
         AppCompatImageButton logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
+        AppCompatImageButton helpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHelpRequestBtn);
+        AppCompatImageButton solutionRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionRequestBtn);
+        AppCompatImageButton solutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionBtn);
+        AppCompatImageButton bCodeBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleBCodeBtn);
+        AppCompatImageButton navigationBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleNavigationBtn);
+        AppCompatImageButton treasureHelpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureHelpRequestBtn);
+        AppCompatImageButton treasureSolutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureSolutionBtn);
+        AppCompatImageButton logTreasureBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogTreasureBtn);
+        AppCompatImageButton hollysJokesBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHollysJokesBtn);
+
         logPlanetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
-                        R.animator.holly6000_console_controls_animator);
-                set.setTarget(findViewById(R.id.holly6000ConsoleRedSquareControl_1));
-                set.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(@NonNull Animator animator) {
+                String newTextToDisplay = getResources().getString(R.string.planetLoginText);
+                newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[holly6000ViewModel.getLastPlanetNum()+1][PLANET_NAME_COLUMN];
+                holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+                holly6000ViewModel.setCurrentAction(ACTION_LOG_PLANET);
+                holly6000ViewModel.setUserInputAwaited(true);
+                FragmentManager fm = getSupportFragmentManager();
+                Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentByTag("Holly6000TextDisplayFragment");
 
-                    }
-                    @Override
-                    public void onAnimationEnd(@NonNull Animator animator) {
-                        set.start();
-                    }
-                    @Override
-                    public void onAnimationCancel(@NonNull Animator animator) {
+                if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
+                            .setReorderingAllowed(true)
+                            .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
+                            .commit();
+                }
 
-                    }
-                    @Override
-                    public void onAnimationRepeat(@NonNull Animator animator) {
-
-                    }
-                });
-                set.start();*/
             }
         });
+
+        navigationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        ImageView smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
+
 
         smallHolly6000Monitor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,44 +141,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Ověří konektivitu internetu
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-                .build();
+        holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
 
-        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(@NonNull Network network) {
-                holly6000ViewModel.setInternetAvailable(true);
-                super.onAvailable(network);
-            }
+        holly6000ViewModel.setTeamName("Kuba");
 
-            @Override
-            public void onLost(@NonNull Network network) {
-                holly6000ViewModel.setInternetAvailable(false);
-                super.onLost(network);
-            }
-        };
+        checkInternetAvailability();
 
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(ConnectivityManager.class);
-        connectivityManager.requestNetwork(networkRequest, networkCallback);
+        exitAppOnBackPressed();
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (mLastBackPressedTime + FINISH_APP_TIME_INTERVAL < System.currentTimeMillis()) {
-                    Toast.makeText(getBaseContext(), "Opětovným stiskem zpět ukončíte aplikaci Holly 6000", Toast.LENGTH_SHORT).show();
-                } else {
-                    finish();
-                    System.exit(0);
-                }
-                mLastBackPressedTime = System.currentTimeMillis();
-            }
-        };
-        this.getOnBackPressedDispatcher().addCallback(this, callback);
+        loadGameData();
+
+        animateHolly6000ConsoleItems();
 
     }
 
@@ -193,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             digitDisplayHandler.removeCallbacks(digitDisplayRunnable);
     }
 
-    private void getLastPlanet() {
+/*    private void getLastPlanet() {
 
         final ProgressDialog loading;
 
@@ -204,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
         loading =  ProgressDialog.show(this,"Loading","please wait",false,true);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -257,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
-                        noInternetConnectionWarning();
+                        networkProblemWarning();
                     }
                 }
         ) {
@@ -283,6 +275,124 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(stringRequest);
 
+    }*/
+
+    private void loadGameData() {
+
+        final ProgressDialog loading;
+
+        if (!holly6000ViewModel.isInternetAvailable()) {
+            Log.d("Log Planet", "noInternetConnectionWarning (loadGameData -> začátek)");
+            //noInternetConnectionWarning();
+            //return;
+        }
+
+        loading =  ProgressDialog.show(this,"Loading","please wait",false,true);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        loading.dismiss();
+
+                        //Log.d("Log Planet", "onResponse " + lastPlanet);
+                        //Toast.makeText(getBaseContext(), response, Toast.LENGTH_LONG).show();
+                        String errorSubString = "<!DOC";
+                        int substringLengt = Math.min(response.length(), errorSubString.length());
+                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
+                            Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
+                            networkProblemWarning();
+                            return;
+                        }
+
+                        //Log.d("Log Planet", "Obdrzel jsem jmeno poslední planety " + response);
+
+                        String[] gameDataString = response.split(",",-1);
+
+                        int planetCodesRowsNum = Integer.parseInt(gameDataString[0]);
+                        int planetCodesColumnsNum = Integer.parseInt(gameDataString[1]);
+
+                        String[][] gameData = new String[planetCodesRowsNum][planetCodesColumnsNum];
+                        for (int row = 0; row < planetCodesRowsNum; row++)
+                            for (int column = 0; column < planetCodesColumnsNum; column++) {
+                                gameData[row][column] = (gameDataString[row*planetCodesColumnsNum+column+2]).replace(';', ',');
+                            }
+
+                        holly6000ViewModel.setGameData(gameData);
+                        holly6000ViewModel.setLastPlanetNum(Integer.parseInt(gameDataString[gameDataString.length-6]) - 1);
+                        holly6000ViewModel.setHelpRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-5]));
+                        holly6000ViewModel.setSolutionRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-4]));
+                        holly6000ViewModel.setSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataString.length-3]));
+                        holly6000ViewModel.setTreasureHelpRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-2]));
+                        holly6000ViewModel.setTreasureSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataString.length-1]));
+
+                        Log.d("Log Planet", "Číslo poslední planety: " + gameDataString[gameDataString.length-6] + "; helpRequested: " + gameDataString[gameDataString.length-5] + "; solutionRequested: " + gameDataString[gameDataString.length-4] + "; solutionCommitted: " + gameDataString[gameDataString.length-3] + "; treasureHelpRequested: " + gameDataString[gameDataString.length-2] + "; treasureSolutionCommitted: " + gameDataString[gameDataString.length-1]);
+
+                        /*String[][] gameData = holly6000ViewModel.getPlanetCodes();
+                        if (lastPlanet.equals("Planeta nenalezena")) {
+                            nextPlanet = gameData[0][0];
+                        } else {
+                            byte i;
+                            for (i = 0; i < gameData[0].length; i++)
+                                if (gameData[0][i].equals(lastPlanet)) {
+                                    break;
+                                }
+                            nextPlanet = gameData[0][i + 1];
+                        }
+                        Log.d("Log Planet", "Obdrzel jsem jmeno dalsi planety " + nextPlanet);
+                        //displayLogInstructions(nextPlanet);
+                        holly6000ViewModel.setNextPlanet(nextPlanet);
+
+
+                        byte i;
+                        for (i = 0; i < gameData[0].length; i++)
+                            if (gameData[0][i].equals(nextPlanet)) {
+                                Log.d("Log Planet", "Porovnavam planetu " + gameData[0][i]);
+                                Log.d("Log Planet", "S planetou " + nextPlanet);
+                                break;
+                            }
+                        Log.d("Log Planet", "Dalsi planeta je na pozici " + i);
+                        holly6000ViewModel.setCorrectPlanetPSW(gameData[1][i]);
+                        Log.d("Log Planet", "Kod dalsi planety je " + gameData[1][i]);
+                        //Toast.makeText(MainActivity.this, holly6000ViewModel.getCorrectPlanetPSW(), Toast.LENGTH_LONG).show();
+                        FragmentManager fm = getSupportFragmentManager();
+                        PlanetLoginDialogFragment planetLoginDialogFragment = new PlanetLoginDialogFragment();
+                        planetLoginDialogFragment.show(fm, "Planet Login Dialog Fragment");*/
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        loading.dismiss();
+                        Log.d("Log Planet", "networkProblemWarning (loadGameData -> onErrorResponse)" + error.toString());
+                        //error.printStackTrace();
+                        networkProblemWarning();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> parmas = new HashMap<>();
+
+                //here we pass params
+                parmas.put("action", "loadGameData");
+                //parmas.put("action", "findLastPlanet");
+                parmas.put("team", holly6000ViewModel.getTeamName());
+                //Log.d("Log Planet", "Posilam jmeno tymu " + holly6000ViewModel.getTeamName());
+
+                return parmas;
+            }
+        };
+
+        int socketTimeOut = 5000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        stringRequest.setRetryPolicy(policy);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        queue.add(stringRequest);
+
     }
 
     //private void writeToDatabase() {
@@ -292,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
         final String planetLogCodeTVtext = planetLogCodeET.getText().toString().trim();
 
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -313,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         loading.dismiss();
                         MainActivity myActivity = (MainActivity) getActivity();
-                        myActivity.noInternetConnectionWarning();
+                        myActivity.networkProblemWarning();
                     }
                 }
         ) {
@@ -343,6 +453,50 @@ public class MainActivity extends AppCompatActivity {
 
     }*/
 
+    public void checkInternetAvailability() {
+        // Ověří konektivitu internetu
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                .build();
+
+        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                holly6000ViewModel.setInternetAvailable(true);
+                super.onAvailable(network);
+            }
+
+            @Override
+            public void onLost(@NonNull Network network) {
+                holly6000ViewModel.setInternetAvailable(false);
+                super.onLost(network);
+            }
+        };
+
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(ConnectivityManager.class);
+
+        connectivityManager.requestNetwork(networkRequest, networkCallback);
+    }
+
+    public void exitAppOnBackPressed() {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mLastBackPressedTime + FINISH_APP_TIME_INTERVAL < System.currentTimeMillis()) {
+                    Toast.makeText(getBaseContext(), R.string.app_exit_warning, Toast.LENGTH_SHORT).show();
+                } else {
+                    finish();
+                    System.exit(0);
+                }
+                mLastBackPressedTime = System.currentTimeMillis();
+            }
+        };
+        this.getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
     public void noInternetConnectionWarning() {
         new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.myDialog))
                 .setTitle("Holly 6000 unavilable")
@@ -369,8 +523,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void animateHolly6000ConsoleItems()
-    {
+    public void animateHolly6000ConsoleItems() {
         // Console controls animations
         /*ImageView holly6000ConsoleRedSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleRedSquareControl_1);
         ImageView holly6000ConsoleBlueSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleBlueSquareControl_1);

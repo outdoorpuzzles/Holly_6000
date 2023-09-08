@@ -72,6 +72,8 @@
             android:background="@null"
             android:inputType="textNoSuggestions|textVisiblePassword"
 
+            android:imeOptions="actionDone"
+
             android:textCursorDrawable="@drawable/cursor_drawable"
             android:cursorVisible="true"
 
