@@ -12,10 +12,29 @@
     <string name="holly6000_monitor_holly_prompt">"Holly 6000&gt; "</string>
     <string name="holly6000_monitor_data_loading">&lt;ODESÍLÁM DATA&gt;</string>
     <string name="holly6000_monitor_data_loaded">&lt;DATA ODESLÁNA&gt;</string>
-    <string name="holly6000_monitor_planet_logged">Planeta úspěšně zalogována</string>
 
-    <string name="planetLoginText">"Zadejte vstupní kód k planetě "</string>
-    <string name="invalidPlanetCodeText">"Vámi zadaný kód není platný vstupní kód k planetě "</string>
+    <string name="no_internet_connection_warning">"Spojení s mateřskou lodí nebylo navázáno. Zkuste to prosím později."</string>
+    <string name="network_problem_warning">"Holly hlásí, že je někde problém. Zkuste to prosím později. Když to nepůjde, kontatujte mateřskou loď."</string>
+
+    <string name="planet_login_text">"Zadejte vstupní kód k planetě "</string>
+    <string name="planet_logged_text">Planeta úspěšně zalogována</string>
+    <string name="invalid_planet_code_text">"Vámi zadaný kód není platný vstupní kód k planetě "</string>
+
+    <string name="help_request_text">"Zadejte vstupní kód k planetě "</string>
+    <string name="help_request_confirmation_text">Skutečně chcete požádat o nápovědu? (Y/N)</string>
+    <string name="help_starting_text">"Nápověda k této šifře zní: "</string>
+
+    <string name="solution_commit_text">"Zadejte řešení šifry"</string>
+    <string name="solution_committed_text">Vaše řešení bylo správné a úspěšně zalogované</string>
+    <string name="invalid_solution_text">"Vámi zadané řešení není správné"</string>
+
+    <string name="treasure_solution_commit_text">"Zadejte řešení pokladové šifry"</string>
+    <string name="treasure_solution_committed_text">Vaše řešení pokladu bylo správné a úspěšně zalogované</string>
+    <string name="invalid_treasure_solution_text">"Vámi zadané řešení pokladu není správné"</string>
+
+    <string name="treasure_login_text">"Zadejte vstupní kód k pokladu "</string>
+    <string name="treasure_logged_text">Poklad úspěšně zalogován</string>
+    <string name="invalid_treasure_code_text">"Vámi zadaný kód není platný vstupní kód k pokladu"</string>
 
     <string name="holly6000_monitor_caption">Holly 6000</string>
 

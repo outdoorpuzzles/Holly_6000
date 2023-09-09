@@ -173,7 +173,7 @@ public class TeamLoginDialogFragment extends androidx.fragment.app.DialogFragmen
                     int substringLengt = Math.min(response.length(), errorSubString.length());
                     if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
                        MainActivity myActivity = (MainActivity) getActivity();
-                       myActivity.networkProblemWarning();
+                       myActivity.noInternetConnectionWarning();
                     } else {
                        teamName(response);
                     }

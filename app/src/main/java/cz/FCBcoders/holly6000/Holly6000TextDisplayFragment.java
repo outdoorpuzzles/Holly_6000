@@ -1,7 +1,6 @@
 package cz.FCBcoders.holly6000;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +16,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Holly6000TextDisplayFragment extends Fragment {
+    final String YES = "Y";
+    final String NO = "N";
     int mIndex = 0;
     int lastNewLineStart = 0;
     Runnable characterAdder = null;
@@ -107,13 +107,19 @@ public class Holly6000TextDisplayFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(promptET.getWindowToken(), 0);
+
                     String submittedText = promptET.getText().toString().trim();
+
+                    holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + jmenoTymu + "> " + submittedText);
 
                     Collator collatorInstance = Collator.getInstance();
                     collatorInstance.setStrength(Collator.PRIMARY);
 
                     int planetNum = holly6000ViewModel.getLastPlanetNum();
                     String planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];
+                    int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
                     String newTextToDisplay = "";
 
                     switch (holly6000ViewModel.getCurrentAction()) {
@@ -121,50 +127,70 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             String nextPlanetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
                             String nextPlanetCode = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_CODE_COLUMN];
                             if (collatorInstance.equals(submittedText, nextPlanetCode)) {
-                                Toast.makeText(getActivity(),"Zadáno správné řešení", Toast.LENGTH_SHORT).show();
-
-                                logAction("logPlanet", nextPlanetName, submittedText);
-                                holly6000ViewModel.setLastPlanetNum(planetNum+1);
+                                //Toast.makeText(getActivity(),"Zadáno správné řešení", Toast.LENGTH_SHORT).show();
+                                //Log.d("Log Planet", "Last planet num PŘED zalogováním: " + holly6000ViewModel.getLastPlanetNum());
+                                logAction("logPlanet", nextPlanetName);
+                                //Log.d("Log Planet", "Last planet num PO zalogování: " + holly6000ViewModel.getLastPlanetNum());
 
                             } else {
-                                Toast.makeText(getActivity(),"Blbě, vole! :)", Toast.LENGTH_SHORT).show();
-
-                                String displayText = holly6000ViewModel.getDisplayText();
-                                holly6000ViewModel.setDisplayText(displayText + "\n" + jmenoTymu + "> " + submittedText);
-
-                                newTextToDisplay = getResources().getString(R.string.invalidPlanetCodeText);
+                                //Toast.makeText(getActivity(),"Blbě, vole! :)", Toast.LENGTH_SHORT).show();
+                                newTextToDisplay = getResources().getString(R.string.invalid_planet_code_text);
                                 newTextToDisplay = newTextToDisplay + nextPlanetName;
                                 holly6000ViewModel.setUserInputAwaited(true);
                                 retroComputerTextAnimation(newTextToDisplay);
                             }
-
                             break;
+
                         case MainActivity.ACTION_REQUEST_HELP:
+                            if (collatorInstance.equals(submittedText, YES)) {
+                                logAction("requestHelp", planetName);
+                            }
 
                             break;
+
                         case MainActivity.ACTION_REGUEST_SOLUTION:
 
                             break;
-                        case MainActivity.ACTION_COMMIT_SOLUTION:
 
+                        case MainActivity.ACTION_COMMIT_SOLUTION:
+                            String correctSolution = holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
+                            if (collatorInstance.equals(submittedText, correctSolution)) {
+                                logAction("logSolution", planetName);
+                            } else {
+                                newTextToDisplay = getResources().getString(R.string.invalid_solution_text);
+                                holly6000ViewModel.setUserInputAwaited(true);
+                                retroComputerTextAnimation(newTextToDisplay);
+                            }
                             break;
+
                         case MainActivity.ACTION_COMMIT_B_CODE:
 
                             break;
-                        case MainActivity.ACTION_GET_COORDINATES:
 
-                            break;
                         case MainActivity.ACTION_REQUEST_TREASURE_HELP:
 
                             break;
+
                         case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
-
+                            String correctTreasureSolution = holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.SOLUTION_COLUMN];
+                            if (collatorInstance.equals(submittedText, correctTreasureSolution)) {
+                                logAction("commitTreasureSolution", planetName);
+                            } else {
+                                newTextToDisplay = getResources().getString(R.string.invalid_treasure_solution_text);
+                                holly6000ViewModel.setUserInputAwaited(true);
+                                retroComputerTextAnimation(newTextToDisplay);
+                            }
                             break;
+
                         case MainActivity.ACTION_LOG_TREASURE:
-
-                            break;
-                        case MainActivity.ACTION_GET_NEWS:
-
+                            String treasureCode = holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.PLANET_CODE_COLUMN];
+                            if (collatorInstance.equals(submittedText, treasureCode)) {
+                                logAction("logTreasure", planetName);
+                            } else {
+                                newTextToDisplay = getResources().getString(R.string.invalid_treasure_code_text);
+                                holly6000ViewModel.setUserInputAwaited(true);
+                                retroComputerTextAnimation(newTextToDisplay);
+                            }
                             break;
                     }
 
@@ -334,10 +360,8 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
     }
 
-    private void logAction(String currentAction, String planet, String submittedText) {
-
+    private void logAction(String currentAction, String planet) {
         final Activity activity = getActivity();
-        final ProgressDialog loading;
 
         if (!holly6000ViewModel.isInternetAvailable()) {
             Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
@@ -346,43 +370,71 @@ public class Holly6000TextDisplayFragment extends Fragment {
             return;
         }
 
-        //loading =  ProgressDialog.show(activity,"Loading","please wait",false,true);
-
-        holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + jmenoTymu + "> " + submittedText);
-        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
-        promptTV.setText(getResources().getString(R.string.holly6000_monitor_data_loading));
-        promptTV.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.holly6000_monitor_data_loading_animation));
-        promptET.setText("");
-        promptET.setVisibility(View.INVISIBLE);
-        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(promptET.getWindowToken(), 0);
+        startLoadingProgress();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() +
-                                "\n" + getResources().getString(R.string.holly6000_monitor_data_loading));
-                        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
-                        //promptTV.setText(getResources().getString(R.string.holly6000_monitor_holly_prompt));
-                        promptTV.clearAnimation();
-                        promptET.setText("");
-                        //promptET.setVisibility(View.VISIBLE);
-                        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
-                        holly6000ViewModel.setUserInputAwaited(false);
-                        retroComputerTextAnimation(getResources().getString(R.string.holly6000_monitor_planet_logged));
+                        stopLoadingProgress();
 
-                        //loading.dismiss();
-                        //Toast.makeText(getActivity(), response, Toast.LENGTH_LONG).show();
+                        int planetNum = holly6000ViewModel.getLastPlanetNum();
+                        String newTextToDisplay = "";
+
+                        Log.d("Log Planet", "response: " + response);
 
                         String errorSubString = "<!DOC";
                         int substringLengt = Math.min(response.length(), errorSubString.length());
                         if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
                             Log.d("Log Planet", "error message (logAction -> onResponse): " + response);
                             MainActivity myActivity = (MainActivity) getActivity();
-                            myActivity.networkProblemWarning();
+                            myActivity.noInternetConnectionWarning();
                             return;
+                        } else {
+
+                            switch (holly6000ViewModel.getCurrentAction()) {
+                                case MainActivity.ACTION_LOG_PLANET:
+                                    holly6000ViewModel.setLastPlanetNum(holly6000ViewModel.getLastPlanetNum()+1);
+                                    retroComputerTextAnimation(getResources().getString(R.string.planet_logged_text));
+                                    break;
+
+                                case MainActivity.ACTION_REQUEST_HELP:
+                                    holly6000ViewModel.setHelpRequested(true);
+                                    newTextToDisplay = getResources().getString(R.string.help_starting_text);
+                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.HELP_COLUMN];
+                                    retroComputerTextAnimation(newTextToDisplay);
+                                    break;
+
+                                case MainActivity.ACTION_REGUEST_SOLUTION:
+
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_SOLUTION:
+                                    holly6000ViewModel.setHelpRequested(true);
+                                    retroComputerTextAnimation(getResources().getString(R.string.solution_committed_text));
+                                    // TODO odemknout coordinates
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_B_CODE:
+
+                                    break;
+
+                                case MainActivity.ACTION_REQUEST_TREASURE_HELP:
+
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
+                                    holly6000ViewModel.setTreasureSolutionCommitted(true);
+                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_solution_committed_text));
+                                    // TODO odemknout coordinates
+                                    break;
+
+                                case MainActivity.ACTION_LOG_TREASURE:
+                                    holly6000ViewModel.setTreasureLogged(true);
+                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_logged_text));
+                                    break;
+                            }
+
                         }
                     }
                 },
@@ -390,12 +442,11 @@ public class Holly6000TextDisplayFragment extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(getActivity(), "Spojení vypršelo", Toast.LENGTH_LONG).show();
-                        //loading.dismiss();
+                        stopLoadingProgress();
                         Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
                         //error.printStackTrace();
                         MainActivity myActivity = (MainActivity) getActivity();
-                        myActivity.networkProblemWarning();
+                        myActivity.noInternetConnectionWarning();
                     }
                 }
         ){
@@ -413,7 +464,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
             }
         };
 
-        int socketTimeOut = 5000;// u can change this .. here it is 50 seconds
+        int socketTimeOut = 15000;// u can change this .. here it is 15 seconds
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 
         stringRequest.setRetryPolicy(policy);
@@ -421,6 +472,24 @@ public class Holly6000TextDisplayFragment extends Fragment {
         RequestQueue queue = Volley.newRequestQueue(activity);
         queue.add(stringRequest);
 
+    }
+
+    public void startLoadingProgress() {
+        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
+        promptTV.setText(getResources().getString(R.string.holly6000_monitor_data_loading));
+        promptTV.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.holly6000_monitor_data_loading_animation));
+        promptET.setText("");
+        promptET.setVisibility(View.INVISIBLE);
+        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
+    }
+
+    public void stopLoadingProgress() {
+        holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + getResources().getString(R.string.holly6000_monitor_data_loading));
+        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
+        promptTV.clearAnimation();
+        promptET.setText("");
+        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
+        holly6000ViewModel.setUserInputAwaited(false);
     }
 
     @Override

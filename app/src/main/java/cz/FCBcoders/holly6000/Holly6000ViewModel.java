@@ -13,7 +13,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private int currentAction = -1;
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbxs9jFsSX6JN4KSZJ-d2uBSHk3-WhbPWYfi6rJV7gc2TNQ84a5yU-OqAwVR3GL6SENxbw/exec";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbyZ_GdIyqHXjfXQ9V7jHBJsQsa4Hz3JNvgsoSwly8NMDcT6x7i4C6hiuZbDzd0hX_kBRg/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
@@ -23,20 +23,20 @@ public class Holly6000ViewModel extends ViewModel {
    private boolean solutionCommitted = false;
    private boolean treasureHelpRequested = false;
    private boolean treasureSolutionCommitted = false;
+   private boolean treasureLogged = false;
    private boolean userInputAwaited = false;
 
    /* Implementace */
-
    public String[][] getGameData() {
       return gameData;
    }
+
    public void setGameData(String[][] gameData) {
       this.gameData = gameData;
    }
    public int getLastPlanetNum() {
       return lastPlanetNum;
    }
-
    public void setLastPlanetNum(int lastPlanetNum) {
       this.lastPlanetNum = lastPlanetNum;
    }
@@ -79,6 +79,14 @@ public class Holly6000ViewModel extends ViewModel {
 
    public void setTreasureSolutionCommitted(boolean treasureSolutionCommitted) {
       this.treasureSolutionCommitted = treasureSolutionCommitted;
+   }
+
+   public boolean isTreasureLogged() {
+      return treasureLogged;
+   }
+
+   public void setTreasureLogged(boolean treasureLogged) {
+      this.treasureLogged = treasureLogged;
    }
 
    public String getTeamName() {
