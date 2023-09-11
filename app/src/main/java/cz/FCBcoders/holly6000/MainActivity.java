@@ -47,17 +47,18 @@ public class MainActivity extends AppCompatActivity {
     public static final int HELP_COLUMN = 3;
     public static final int SOLUTION_COLUMN = 4;
     public static final int B_CODE_COLUMN = 5;
-    public static final int ACTION_LOG_PLANET = 0;
-    public static final int ACTION_REQUEST_HELP = 1;
-    public static final int ACTION_REGUEST_SOLUTION = 2;
-    public static final int ACTION_COMMIT_SOLUTION = 3;
-    public static final int ACTION_COMMIT_B_CODE = 4;
-    public static final int ACTION_GET_COORDINATES = 5;
-    public static final int ACTION_REQUEST_TREASURE_HELP = 6;
-    public static final int ACTION_COMMIT_TREASURE_SOLUTION = 7;
-    public static final int ACTION_LOG_TREASURE = 8;
-    public static final int ACTION_GET_NEWS = 9;
-
+    public static final String ACTION_LOG_PLANET = "logPlanet";
+    public static final String ACTION_REQUEST_HELP = "requestHelp";
+    public static final String ACTION_REGUEST_SOLUTION = "requestSolution";
+    public static final String ACTION_COMMIT_SOLUTION = "logSolution";
+    public static final String ACTION_COMMIT_B_CODE = "logBCode";
+    public static final String ACTION_GET_COORDINATES = "getCoordinates";
+    public static final String ACTION_REQUEST_TREASURE_HELP = "requestTreasureHelp";
+    public static final String ACTION_COMMIT_TREASURE_SOLUTION = "commitTreasureSolution";
+    public static final String ACTION_LOG_TREASURE = "logTreasure";
+    public static final String ACTION_GET_NEWS = "getNews";
+    AppCompatImageButton logPlanetBtn, helpRequestBtn,solutionRequestBtn, solutionBtn, bCodeBtn,
+            navigationBtn, treasureHelpRequestBtn, treasureSolutionBtn, logTreasureBtn, hollysJokesBtn;
     private final int FINISH_APP_TIME_INTERVAL = 2000;
     private long mLastBackPressedTime;
     Handler digitDisplayHandler = null;
@@ -69,16 +70,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AppCompatImageButton logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
-        AppCompatImageButton helpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHelpRequestBtn);
-        AppCompatImageButton solutionRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionRequestBtn);
-        AppCompatImageButton solutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionBtn);
-        AppCompatImageButton bCodeBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleBCodeBtn);
-        AppCompatImageButton navigationBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleNavigationBtn);
-        AppCompatImageButton treasureHelpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureHelpRequestBtn);
-        AppCompatImageButton treasureSolutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureSolutionBtn);
-        AppCompatImageButton logTreasureBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogTreasureBtn);
-        AppCompatImageButton hollysJokesBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHollysJokesBtn);
+        logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
+        helpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHelpRequestBtn);
+        solutionRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionRequestBtn);
+        solutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleSolutionBtn);
+        bCodeBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleBCodeBtn);
+        navigationBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleNavigationBtn);
+        treasureHelpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureHelpRequestBtn);
+        treasureSolutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureSolutionBtn);
+        logTreasureBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogTreasureBtn);
+        hollysJokesBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHollysJokesBtn);
 
         ImageView smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
 
@@ -107,11 +108,66 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        solutionRequestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int planetNum = holly6000ViewModel.getLastPlanetNum();
+                String newTextToDisplay = "";
+                if (holly6000ViewModel.isSolutionRequested()) {
+                    newTextToDisplay = getResources().getString(R.string.solution_starting_text);
+                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
+                    runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, false);
+                } else {
+                    newTextToDisplay = getResources().getString(R.string.solution_request_confirmation_text);
+                    runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, true);
+                }
+            }
+        });
+
         solutionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String newTextToDisplay = getResources().getString(R.string.solution_commit_text);
                 runAction(ACTION_COMMIT_SOLUTION, newTextToDisplay, true);
+            }
+        });
+
+        navigationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newTextToDisplay = "";
+                String planetNavigation = "";
+                String treasureNavigation = "";
+
+                /*if (holly6000ViewModel.isSolutionCommitted())
+                    planetNavigation = getResources().getString(R.string.planet_navigation_text_1) +
+                            holly6000ViewModel.getGameData()[holly6000ViewModel.getLastPlanetNum()+1][PLANET_NAME_COLUMN] +
+                            getResources().getString(R.string.planet_navigation_text_2) + "\n";
+
+                if (holly6000ViewModel.isTreasureSolutionCommitted())
+                    treasureNavigation = getResources().getString(R.string.treasure_navigation_text) +
+                            holly6000ViewModel.getGameData()[holly6000ViewModel.getGameData().length-1][PLANET_NAME_COLUMN];
+
+                newTextToDisplay = planetNavigation + treasureNavigation;
+
+                runAction(ACTION_GET_COORDINATES, newTextToDisplay, false);*/
+                Log.d("Log Planet", "navigationBtn onClick");
+            }
+        });
+
+        treasureHelpRequestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+                String newTextToDisplay = "";
+                if (holly6000ViewModel.isTreasureHelpRequested()) {
+                    newTextToDisplay = getResources().getString(R.string.treasure_help_starting_text);
+                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.HELP_COLUMN];
+                    runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, false);
+                } else {
+                    newTextToDisplay = getResources().getString(R.string.treasure_help_request_confirmation_text);
+                    runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, true);
+                }
             }
         });
 
@@ -174,9 +230,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void runAction(int action, String newTextToDisplay, boolean userInputAwaited) {
+    public void runAction(String currentAction, String newTextToDisplay, boolean userInputAwaited) {
         holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
-        holly6000ViewModel.setCurrentAction(action);
+        holly6000ViewModel.setCurrentAction(currentAction);
         holly6000ViewModel.setUserInputAwaited(userInputAwaited);
 
         FragmentManager fm = getSupportFragmentManager();
@@ -368,6 +424,51 @@ public class MainActivity extends AppCompatActivity {
 
                         Log.d("Log Planet", "Číslo poslední planety: " + gameDataString[gameDataString.length-7] + "; helpRequested: " + gameDataString[gameDataString.length-6] + "; solutionRequested: " + gameDataString[gameDataString.length-5] + "; solutionCommitted: " + gameDataString[gameDataString.length-4] + "; treasureHelpRequested: " + gameDataString[gameDataString.length-3] + "; treasureSolutionCommitted: " + gameDataString[gameDataString.length-2] + "; treasureLogged: " + gameDataString[gameDataString.length-1]);
 
+                        if (holly6000ViewModel.getLastPlanetNum() == -1) {
+                            logPlanetBtn.setEnabled(true);
+                            helpRequestBtn.setEnabled(false);
+                            solutionRequestBtn.setEnabled(false);
+                            solutionBtn.setEnabled(false);
+                            bCodeBtn.setEnabled(false);
+                            navigationBtn.setEnabled(false);
+                            treasureHelpRequestBtn.setEnabled(false);
+                            treasureSolutionBtn.setEnabled(false);
+                            logTreasureBtn.setEnabled(false);
+                        } else {
+                            logPlanetBtn.setEnabled(false);
+                            bCodeBtn.setEnabled(true);
+                            navigationBtn.setEnabled(false);
+                            logTreasureBtn.setEnabled(false);
+                        }
+
+                        if (holly6000ViewModel.isSolutionRequested())
+                            helpRequestBtn.setEnabled(false);
+
+                        if (holly6000ViewModel.isSolutionCommitted()) {
+                            logPlanetBtn.setEnabled(true);
+                            helpRequestBtn.setEnabled(false);
+                            solutionRequestBtn.setEnabled(false);
+                            solutionBtn.setEnabled(false);
+                            navigationBtn.setEnabled(true);
+                        }
+
+                        if (holly6000ViewModel.isTreasureSolutionCommitted()) {
+                            navigationBtn.setEnabled(true);
+                            treasureHelpRequestBtn.setEnabled(false);
+                            treasureSolutionBtn.setEnabled(false);
+                            logTreasureBtn.setEnabled(true);
+                        }
+
+                        if (holly6000ViewModel.isTreasureLogged()) {
+                            treasureHelpRequestBtn.setEnabled(false);
+                            treasureSolutionBtn.setEnabled(false);
+                            logTreasureBtn.setEnabled(false);
+                            if (!holly6000ViewModel.isSolutionCommitted())
+                                navigationBtn.setEnabled(false);
+                        }
+
+
+
                         /*String[][] gameData = holly6000ViewModel.getPlanetCodes();
                         if (lastPlanet.equals("Planeta nenalezena")) {
                             nextPlanet = gameData[0][0];
@@ -556,6 +657,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //public void networkProblemWarning() {
    /* public void networkProblemWarning() {
 
         holly6000ViewModel.setUserInputAwaited(true);

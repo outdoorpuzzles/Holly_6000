@@ -12,8 +12,8 @@ public class Holly6000ViewModel extends ViewModel {
    private String displayText = "";
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
-   private int currentAction = -1;
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbyZ_GdIyqHXjfXQ9V7jHBJsQsa4Hz3JNvgsoSwly8NMDcT6x7i4C6hiuZbDzd0hX_kBRg/exec";
+   private String currentAction = "";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbxmkUNu5NMDPWbPrBXYaDOP_8btrZq6uuq53iUUDsK_iz1eG_nz3dT-MXwelRoEqeWDWA/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
@@ -147,11 +147,11 @@ public class Holly6000ViewModel extends ViewModel {
       this.internetAvailable = internetAvailable;
    }
 
-   public int getCurrentAction() {
+   public String getCurrentAction() {
       return currentAction;
    }
 
-   public void setCurrentAction(int currentAction) {
+   public void setCurrentAction(String currentAction) {
       this.currentAction = currentAction;
    }
 

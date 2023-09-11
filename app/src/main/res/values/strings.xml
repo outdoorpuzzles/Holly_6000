@@ -20,13 +20,25 @@
     <string name="planet_logged_text">Planeta úspěšně zalogována</string>
     <string name="invalid_planet_code_text">"Vámi zadaný kód není platný vstupní kód k planetě "</string>
 
-    <string name="help_request_text">"Zadejte vstupní kód k planetě "</string>
     <string name="help_request_confirmation_text">Skutečně chcete požádat o nápovědu? (Y/N)</string>
     <string name="help_starting_text">"Nápověda k této šifře zní: "</string>
+    <string name="help_request_refused_text">"Nápověda nebyla vyžádána"</string>
+
+    <string name="solution_request_confirmation_text">Skutečně chcete požádat o řešení? (Y/N)</string>
+    <string name="solution_starting_text">"Řešení této šifry je: "</string>
+    <string name="solution_request_refused_text">"Řešení nebylo vyžádáno"</string>
 
     <string name="solution_commit_text">"Zadejte řešení šifry"</string>
     <string name="solution_committed_text">Vaše řešení bylo správné a úspěšně zalogované</string>
     <string name="invalid_solution_text">"Vámi zadané řešení není správné"</string>
+
+    <string name="planet_navigation_text_1">"Souřadnice planety "</string>
+    <string name="planet_navigation_text_2">" jsou: "</string>
+    <string name="treasure_navigation_text">"Souřadnice pokladu jsou: "</string>
+
+    <string name="treasure_help_request_confirmation_text">Skutečně chcete požádat o nápovědu k pokladu? (Y/N)</string>
+    <string name="treasure_help_starting_text">"Nápověda k pokladové šifře zní: "</string>
+    <string name="treasure_help_request_refused_text">"Nápověda  pokladu nebyla vyžádána"</string>
 
     <string name="treasure_solution_commit_text">"Zadejte řešení pokladové šifry"</string>
     <string name="treasure_solution_committed_text">Vaše řešení pokladu bylo správné a úspěšně zalogované</string>

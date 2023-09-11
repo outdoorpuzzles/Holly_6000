@@ -7,7 +7,7 @@
         android:startColor="@color/silver"
         android:endColor="@color/dark_silver"/>
     <stroke
-        android:width="6dip"
+        android:width="3dip"
         android:color="@color/red" />
     <corners
         android:radius="10dp" />
