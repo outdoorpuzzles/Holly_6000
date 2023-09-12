@@ -29,8 +29,13 @@
     <string name="solution_request_refused_text">"Řešení nebylo vyžádáno"</string>
 
     <string name="solution_commit_text">"Zadejte řešení šifry"</string>
-    <string name="solution_committed_text">Vaše řešení bylo správné a úspěšně zalogované</string>
+    <string name="solution_logged_text">Vaše řešení bylo správné a úspěšně zalogované</string>
     <string name="invalid_solution_text">"Vámi zadané řešení není správné"</string>
+
+    <string name="b_code_commit_text">"Zadejte B-kód"</string>
+    <string name="b_code_logged_text">Váš B-kód byl správný a úspěšně zalogovaný</string>
+    <string name="invalid_b_code_text">"Vámi zadaný B-kód není správný"</string>
+    <string name="duplicate_b_code_text">"Tento B-kód jste již zadali"</string>
 
     <string name="planet_navigation_text_1">"Souřadnice planety "</string>
     <string name="planet_navigation_text_2">" jsou: "</string>
@@ -41,7 +46,7 @@
     <string name="treasure_help_request_refused_text">"Nápověda  pokladu nebyla vyžádána"</string>
 
     <string name="treasure_solution_commit_text">"Zadejte řešení pokladové šifry"</string>
-    <string name="treasure_solution_committed_text">Vaše řešení pokladu bylo správné a úspěšně zalogované</string>
+    <string name="treasure_solution_logged_text">Vaše řešení pokladu bylo správné a úspěšně zalogované</string>
     <string name="invalid_treasure_solution_text">"Vámi zadané řešení pokladu není správné"</string>
 
     <string name="treasure_login_text">"Zadejte vstupní kód k pokladu "</string>

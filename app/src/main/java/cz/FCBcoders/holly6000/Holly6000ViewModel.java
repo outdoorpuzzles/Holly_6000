@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import java.util.HashMap;
+
 public class Holly6000ViewModel extends ViewModel {
    private String teamName = "";
    private String submittedPSW = "";
@@ -13,7 +15,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private String currentAction = "";
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbxmkUNu5NMDPWbPrBXYaDOP_8btrZq6uuq53iUUDsK_iz1eG_nz3dT-MXwelRoEqeWDWA/exec";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwYt-Xt7W6zldeKB2i_yNPwDJKYVzbiWliBHq0Ok2cRbmN7MtsvpD81z60ZWCbj1rZ5Nw/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
@@ -25,22 +27,23 @@ public class Holly6000ViewModel extends ViewModel {
    private boolean treasureSolutionCommitted = false;
    private boolean treasureLogged = false;
    private boolean userInputAwaited = false;
+   private HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
 
    /* Implementace */
+
    public String[][] getGameData() {
       return gameData;
    }
-
    public void setGameData(String[][] gameData) {
       this.gameData = gameData;
    }
+
    public int getLastPlanetNum() {
       return lastPlanetNum;
    }
    public void setLastPlanetNum(int lastPlanetNum) {
       this.lastPlanetNum = lastPlanetNum;
    }
-
    public boolean isHelpRequested() {
       return helpRequested;
    }
@@ -169,5 +172,13 @@ public class Holly6000ViewModel extends ViewModel {
 
    public void setUserInputAwaited(boolean userInputAwaited) {
       this.userInputAwaited = userInputAwaited;
+   }
+
+   public HashMap<String, Boolean> getBCodes() {
+      return bCodes;
+   }
+
+   public void setBCodes(HashMap<String, Boolean> bCodes) {
+      this.bCodes = bCodes;
    }
 }

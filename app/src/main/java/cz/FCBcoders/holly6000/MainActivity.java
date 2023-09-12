@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACTION_LOG_TREASURE = "logTreasure";
     public static final String ACTION_GET_NEWS = "getNews";
     AppCompatImageButton logPlanetBtn, helpRequestBtn,solutionRequestBtn, solutionBtn, bCodeBtn,
-            navigationBtn, treasureHelpRequestBtn, treasureSolutionBtn, logTreasureBtn, hollysJokesBtn;
+            navigationBtn, treasureHelpRequestBtn, treasureSolutionBtn, logTreasureBtn, notificationsBtn;
     private final int FINISH_APP_TIME_INTERVAL = 2000;
     private long mLastBackPressedTime;
     Handler digitDisplayHandler = null;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         treasureHelpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureHelpRequestBtn);
         treasureSolutionBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleTreasureSolutionBtn);
         logTreasureBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogTreasureBtn);
-        hollysJokesBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHollysJokesBtn);
+        notificationsBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleNotificationsBtn);
 
         ImageView smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
 
@@ -132,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        bCodeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String newTextToDisplay = getResources().getString(R.string.b_code_commit_text);
+                runAction(ACTION_COMMIT_B_CODE, newTextToDisplay, true);
+            }
+        });
+
         navigationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,19 +147,21 @@ public class MainActivity extends AppCompatActivity {
                 String planetNavigation = "";
                 String treasureNavigation = "";
 
-                /*if (holly6000ViewModel.isSolutionCommitted())
+                int nextPlanetRow = holly6000ViewModel.getLastPlanetNum() + 1;
+                if (holly6000ViewModel.isSolutionCommitted())
                     planetNavigation = getResources().getString(R.string.planet_navigation_text_1) +
-                            holly6000ViewModel.getGameData()[holly6000ViewModel.getLastPlanetNum()+1][PLANET_NAME_COLUMN] +
-                            getResources().getString(R.string.planet_navigation_text_2) + "\n";
+                            holly6000ViewModel.getGameData()[nextPlanetRow][PLANET_NAME_COLUMN] +
+                            getResources().getString(R.string.planet_navigation_text_2) +
+                            holly6000ViewModel.getGameData()[nextPlanetRow][COORDINATES_COLUMN] + "\n";
 
-                if (holly6000ViewModel.isTreasureSolutionCommitted())
+                int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+                if (holly6000ViewModel.isTreasureSolutionCommitted() && !holly6000ViewModel.isTreasureLogged())
                     treasureNavigation = getResources().getString(R.string.treasure_navigation_text) +
-                            holly6000ViewModel.getGameData()[holly6000ViewModel.getGameData().length-1][PLANET_NAME_COLUMN];
+                            holly6000ViewModel.getGameData()[treasureGameDataRow][COORDINATES_COLUMN];
 
                 newTextToDisplay = planetNavigation + treasureNavigation;
 
-                runAction(ACTION_GET_COORDINATES, newTextToDisplay, false);*/
-                Log.d("Log Planet", "navigationBtn onClick");
+                runAction(ACTION_GET_COORDINATES, newTextToDisplay, false);
             }
         });
 
@@ -184,13 +194,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String newTextToDisplay = getResources().getString(R.string.treasure_login_text);
                 runAction(ACTION_LOG_TREASURE, newTextToDisplay, true);
-            }
-        });
-
-        navigationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
             }
         });
 
@@ -404,25 +407,42 @@ public class MainActivity extends AppCompatActivity {
 
                         String[] gameDataString = response.split(",",-1);
 
-                        int planetCodesRowsNum = Integer.parseInt(gameDataString[0]);
-                        int planetCodesColumnsNum = Integer.parseInt(gameDataString[1]);
+                        int gameDataRows = Integer.parseInt(gameDataString[0]);
+                        int gameDataColumns = Integer.parseInt(gameDataString[1]);
+                        int gameDataItems = gameDataRows * gameDataColumns;
 
-                        String[][] gameData = new String[planetCodesRowsNum][planetCodesColumnsNum];
-                        for (int row = 0; row < planetCodesRowsNum; row++)
-                            for (int column = 0; column < planetCodesColumnsNum; column++) {
-                                gameData[row][column] = (gameDataString[row*planetCodesColumnsNum+column+2]).replace(';', ',');
+                        String[][] gameData = new String[gameDataRows][gameDataColumns];
+                        for (int row = 0; row < gameDataRows; row++)
+                            for (int column = 0; column < gameDataColumns; column++) {
+                                gameData[row][column] = (gameDataString[row*gameDataColumns+column+2]).replace(';', ',');
                             }
 
                         holly6000ViewModel.setGameData(gameData);
-                        holly6000ViewModel.setLastPlanetNum(Integer.parseInt(gameDataString[gameDataString.length-7]) - 1);
-                        holly6000ViewModel.setHelpRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-6]));
-                        holly6000ViewModel.setSolutionRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-5]));
-                        holly6000ViewModel.setSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataString.length-4]));
-                        holly6000ViewModel.setTreasureHelpRequested(Boolean.parseBoolean(gameDataString[gameDataString.length-3]));
-                        holly6000ViewModel.setTreasureSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataString.length-2]));
-                        holly6000ViewModel.setTreasureLogged(Boolean.parseBoolean(gameDataString[gameDataString.length-1]));
+                        holly6000ViewModel.setLastPlanetNum(Integer.parseInt(gameDataString[gameDataItems+2]) - 1);
+                        holly6000ViewModel.setHelpRequested(Boolean.parseBoolean(gameDataString[gameDataItems+3]));
+                        holly6000ViewModel.setSolutionRequested(Boolean.parseBoolean(gameDataString[gameDataItems+4]));
+                        holly6000ViewModel.setSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataItems+5]));
+                        holly6000ViewModel.setTreasureHelpRequested(Boolean.parseBoolean(gameDataString[gameDataItems+6]));
+                        holly6000ViewModel.setTreasureSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataItems+7]));
+                        holly6000ViewModel.setTreasureLogged(Boolean.parseBoolean(gameDataString[gameDataItems+8]));
 
                         Log.d("Log Planet", "Číslo poslední planety: " + gameDataString[gameDataString.length-7] + "; helpRequested: " + gameDataString[gameDataString.length-6] + "; solutionRequested: " + gameDataString[gameDataString.length-5] + "; solutionCommitted: " + gameDataString[gameDataString.length-4] + "; treasureHelpRequested: " + gameDataString[gameDataString.length-3] + "; treasureSolutionCommitted: " + gameDataString[gameDataString.length-2] + "; treasureLogged: " + gameDataString[gameDataString.length-1]);
+
+                        HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
+                        for (int i = 0; i < gameDataRows; i++) {
+                            String bCode = gameData[i][B_CODE_COLUMN];
+                            if (!bCode.equals(""))
+                                bCodes.put(bCode,false);
+                        }
+
+                        for (int i = gameDataItems+9; i < gameDataString.length; i++) {
+                            String loggedBCode = gameDataString[i].toUpperCase(Locale.US);
+                            if (bCodes.containsKey(loggedBCode))
+                                bCodes.put(loggedBCode, true);
+                        }
+
+                        holly6000ViewModel.setBCodes(bCodes);
+
 
                         if (holly6000ViewModel.getLastPlanetNum() == -1) {
                             logPlanetBtn.setEnabled(true);
