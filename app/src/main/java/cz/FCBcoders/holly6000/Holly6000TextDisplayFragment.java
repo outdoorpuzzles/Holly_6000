@@ -32,6 +32,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.text.Collator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Holly6000TextDisplayFragment extends Fragment {
@@ -46,7 +47,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
     EditText promptET;
     ScrollView textDisplaySV;
     String appScriptURL;
-    String jmenoTymu;
     String submittedBCode;
 
     public Holly6000TextDisplayFragment() {
@@ -67,7 +67,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
         holly6000ViewModel = new ViewModelProvider(requireActivity()).get(Holly6000ViewModel.class);
         appScriptURL = holly6000ViewModel.getAppScriptURL();
-        jmenoTymu = holly6000ViewModel.getTeamName();
+        holly6000ViewModel.setTeamName(getResources().getString(R.string.holly6000_monitor_unknown_team_name));
 
         promptET.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -78,21 +78,32 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
                     String submittedText = promptET.getText().toString().trim();
 
-                    holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + jmenoTymu + "> " + submittedText);
+                    holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" +
+                            holly6000ViewModel.getTeamName() + "> " + submittedText);
 
                     Collator collatorInstance = Collator.getInstance();
                     collatorInstance.setStrength(Collator.PRIMARY);
 
                     int planetNum = holly6000ViewModel.getLastPlanetNum();
                     String planetName;
+                    int treasureGameDataRow;
                     /*if (planetNum == -1)
                         planetName = holly6000ViewModel.getGameData()[0][MainActivity.PLANET_NAME_COLUMN];
                     else
                         planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];*/
-                    int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
                     String newTextToDisplay = "";
 
                     switch (holly6000ViewModel.getCurrentAction()) {
+                        case MainActivity.ACTION_LOG_TEAM:
+                            if (submittedText.equals("")) {
+                                newTextToDisplay = getResources().getString(R.string.invalid_team_psw_text);
+                                holly6000ViewModel.setUserInputAwaited(true);
+                                retroComputerTextAnimation(newTextToDisplay);
+                            } else {
+                                logTeamAndLoadGameData(submittedText);
+                            }
+                            break;
+
                         case MainActivity.ACTION_LOG_PLANET:
                             String nextPlanetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
                             String nextPlanetCode = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_CODE_COLUMN];
@@ -182,6 +193,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             break;
 
                         case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
+                            treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
                             String correctTreasureSolution = holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.SOLUTION_COLUMN];
                             if (collatorInstance.equals(submittedText, correctTreasureSolution)) {
                                 logAction();
@@ -193,6 +205,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             break;
 
                         case MainActivity.ACTION_LOG_TREASURE:
+                            treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
                             String treasureCode = holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.PLANET_CODE_COLUMN];
                             if (collatorInstance.equals(submittedText, treasureCode)) {
                                 logAction();
@@ -234,6 +247,395 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void logTeamAndLoadGameData(String submittedTeamPSW) {
+        MainActivity myActivity = (MainActivity) getActivity();
+
+        if (!holly6000ViewModel.isInternetAvailable()) {
+            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            noInternetConnectionWarning();
+            return;
+        }
+
+        boolean[] currentBtnsState = disableAllButtons();
+
+        startLoadingProgress();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        stopLoadingProgress();
+
+                        String errorSubString = "<!DOC";
+                        int substringLengt = Math.min(response.length(), errorSubString.length());
+                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
+                            Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
+                            noInternetConnectionWarning();
+                            return;
+                        }
+
+                        if (response.equals("Chybné PSW")) {
+                            holly6000ViewModel.setUserInputAwaited(true);
+                            retroComputerTextAnimation(getResources().getString(R.string.invalid_team_psw_text));
+                            return;
+                        }
+
+                        //Log.d("Log Planet", "Obdrzel jsem jmeno poslední planety " + response);
+
+                        String[] gameDataString = response.split(",",-1);
+
+                        int gameDataRows = Integer.parseInt(gameDataString[0]);
+                        int gameDataColumns = Integer.parseInt(gameDataString[1]);
+                        int gameDataItems = gameDataRows * gameDataColumns;
+
+                        String[][] gameData = new String[gameDataRows][gameDataColumns];
+                        for (int row = 0; row < gameDataRows; row++)
+                            for (int column = 0; column < gameDataColumns; column++) {
+                                gameData[row][column] = (gameDataString[row*gameDataColumns+column+2]).replace(';', ',');
+                            }
+
+                        holly6000ViewModel.setGameData(gameData);
+                        holly6000ViewModel.setTeamName(gameDataString[gameDataItems+2]);
+                        holly6000ViewModel.setLastPlanetNum(Integer.parseInt(gameDataString[gameDataItems+3]) - 1);
+                        holly6000ViewModel.setHelpRequested(Boolean.parseBoolean(gameDataString[gameDataItems+4]));
+                        holly6000ViewModel.setSolutionRequested(Boolean.parseBoolean(gameDataString[gameDataItems+5]));
+                        holly6000ViewModel.setSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataItems+6]));
+                        holly6000ViewModel.setTreasureHelpRequested(Boolean.parseBoolean(gameDataString[gameDataItems+7]));
+                        holly6000ViewModel.setTreasureSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataItems+8]));
+                        holly6000ViewModel.setTreasureLogged(Boolean.parseBoolean(gameDataString[gameDataItems+9]));
+
+                        Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
+
+                        HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
+                        for (int i = 0; i < gameDataRows; i++) {
+                            String bCode = gameData[i][MainActivity.B_CODE_COLUMN];
+                            if (!bCode.equals(""))
+                                bCodes.put(bCode,false);
+                        }
+
+                        for (int i = gameDataItems+10; i < gameDataString.length; i++) {
+                            String loggedBCode = gameDataString[i].toUpperCase(Locale.US);
+                            if (bCodes.containsKey(loggedBCode))
+                                bCodes.put(loggedBCode, true);
+                        }
+
+                        holly6000ViewModel.setBCodes(bCodes);
+
+                        myActivity.logPlanetBtn.setEnabled(true);
+                        myActivity.helpRequestBtn.setEnabled(true);
+                        myActivity.solutionRequestBtn.setEnabled(true);
+                        myActivity.solutionBtn.setEnabled(true);
+                        myActivity.bCodeBtn.setEnabled(true);
+                        myActivity.navigationBtn.setEnabled(true);
+                        myActivity.treasureHelpRequestBtn.setEnabled(true);
+                        myActivity.treasureSolutionBtn.setEnabled(true);
+                        myActivity.logTreasureBtn.setEnabled(true);
+                        myActivity.notificationsBtn.setEnabled(true);
+
+                        myActivity.smallHolly6000Monitor.setEnabled(true);
+
+                        if (holly6000ViewModel.getLastPlanetNum() == -1) {
+                            myActivity.logPlanetBtn.setEnabled(true);
+                            myActivity.helpRequestBtn.setEnabled(false);
+                            myActivity.solutionRequestBtn.setEnabled(false);
+                            myActivity.solutionBtn.setEnabled(false);
+                            myActivity.bCodeBtn.setEnabled(false);
+                            myActivity.navigationBtn.setEnabled(false);
+                            myActivity.treasureHelpRequestBtn.setEnabled(false);
+                            myActivity.treasureSolutionBtn.setEnabled(false);
+                            myActivity.logTreasureBtn.setEnabled(false);
+                        } else {
+                            myActivity.logPlanetBtn.setEnabled(false);
+                            myActivity.bCodeBtn.setEnabled(true);
+                            myActivity.navigationBtn.setEnabled(false);
+                            myActivity.logTreasureBtn.setEnabled(false);
+                        }
+
+                        if (holly6000ViewModel.isSolutionRequested())
+                            myActivity.helpRequestBtn.setEnabled(false);
+
+                        if (holly6000ViewModel.isSolutionCommitted()) {
+                            myActivity.logPlanetBtn.setEnabled(true);
+                            myActivity.helpRequestBtn.setEnabled(false);
+                            myActivity.solutionRequestBtn.setEnabled(false);
+                            myActivity.solutionBtn.setEnabled(false);
+                            myActivity.navigationBtn.setEnabled(true);
+                        }
+
+                        if (holly6000ViewModel.isTreasureSolutionCommitted()) {
+                            myActivity.navigationBtn.setEnabled(true);
+                            myActivity.treasureHelpRequestBtn.setEnabled(false);
+                            myActivity.treasureSolutionBtn.setEnabled(false);
+                            myActivity.logTreasureBtn.setEnabled(true);
+                        }
+
+                        if (holly6000ViewModel.isTreasureLogged()) {
+                            myActivity.treasureHelpRequestBtn.setEnabled(false);
+                            myActivity.treasureSolutionBtn.setEnabled(false);
+                            myActivity.logTreasureBtn.setEnabled(false);
+                            if (!holly6000ViewModel.isSolutionCommitted())
+                                myActivity.navigationBtn.setEnabled(false);
+                        }
+
+                        String newTextToDisplay = getResources().getString(R.string.team_logged_and_game_data_loaded_text_1);
+                        newTextToDisplay += holly6000ViewModel.getTeamName();
+                        newTextToDisplay += getResources().getString(R.string.team_logged_and_game_data_loaded_text_2);
+
+                        retroComputerTextAnimation(newTextToDisplay);
+
+
+                        /*String[][] gameData = holly6000ViewModel.getPlanetCodes();
+                        if (lastPlanet.equals("Planeta nenalezena")) {
+                            nextPlanet = gameData[0][0];
+                        } else {
+                            byte i;
+                            for (i = 0; i < gameData[0].length; i++)
+                                if (gameData[0][i].equals(lastPlanet)) {
+                                    break;
+                                }
+                            nextPlanet = gameData[0][i + 1];
+                        }
+                        Log.d("Log Planet", "Obdrzel jsem jmeno dalsi planety " + nextPlanet);
+                        //displayLogInstructions(nextPlanet);
+                        holly6000ViewModel.setNextPlanet(nextPlanet);
+
+
+                        byte i;
+                        for (i = 0; i < gameData[0].length; i++)
+                            if (gameData[0][i].equals(nextPlanet)) {
+                                Log.d("Log Planet", "Porovnavam planetu " + gameData[0][i]);
+                                Log.d("Log Planet", "S planetou " + nextPlanet);
+                                break;
+                            }
+                        Log.d("Log Planet", "Dalsi planeta je na pozici " + i);
+                        holly6000ViewModel.setCorrectPlanetPSW(gameData[1][i]);
+                        Log.d("Log Planet", "Kod dalsi planety je " + gameData[1][i]);
+                        //Toast.makeText(MainActivity.this, holly6000ViewModel.getCorrectPlanetPSW(), Toast.LENGTH_LONG).show();
+                        FragmentManager fm = getSupportFragmentManager();
+                        PlanetLoginDialogFragment planetLoginDialogFragment = new PlanetLoginDialogFragment();
+                        planetLoginDialogFragment.show(fm, "Planet Login Dialog Fragment");*/
+
+                        //restoreButtonsState(currentBtnsState);
+
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        stopLoadingProgress();
+                        restoreButtonsState(currentBtnsState);
+                        Log.d("Log Planet", "networkProblemWarning (loadGameData -> onErrorResponse)" + error.toString());
+                        //error.printStackTrace();
+                        noInternetConnectionWarning();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> parmas = new HashMap<>();
+
+                //here we pass params
+                parmas.put("action", "logTeamAndLoadGameData");
+                parmas.put("teamPSW", submittedTeamPSW);
+
+                return parmas;
+            }
+        };
+
+        int socketTimeOut = 15000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        stringRequest.setRetryPolicy(policy);
+
+        RequestQueue queue = Volley.newRequestQueue(myActivity);
+        queue.add(stringRequest);
+
+    }
+
+    private void logAction() {
+        MainActivity myActivity = (MainActivity) getActivity();
+
+        if (!holly6000ViewModel.isInternetAvailable()) {
+            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            noInternetConnectionWarning();
+            return;
+        }
+
+        boolean[] currentBtnsState = disableAllButtons();
+
+        startLoadingProgress();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        stopLoadingProgress();
+
+                        restoreButtonsState(currentBtnsState);
+
+                        int planetNum = holly6000ViewModel.getLastPlanetNum();
+                        int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+                        String newTextToDisplay = "";
+
+                        Log.d("Log Planet", "response: " + response);
+
+                        String errorSubString = "<!DOC";
+                        int substringLengt = Math.min(response.length(), errorSubString.length());
+                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
+                            Log.d("Log Planet", "error message (logAction -> onResponse): " + response);
+                            noInternetConnectionWarning();
+                            return;
+                        } else {
+
+                            switch (holly6000ViewModel.getCurrentAction()) {
+                                case MainActivity.ACTION_LOG_PLANET:
+                                    holly6000ViewModel.setLastPlanetNum(holly6000ViewModel.getLastPlanetNum()+1);
+                                    holly6000ViewModel.setHelpRequested(false);
+                                    holly6000ViewModel.setSolutionRequested(false);
+                                    holly6000ViewModel.setSolutionCommitted(false);
+
+                                    myActivity.logPlanetBtn.setEnabled(false);
+                                    myActivity.helpRequestBtn.setEnabled(true);
+                                    myActivity.solutionRequestBtn.setEnabled(true);
+                                    myActivity.solutionBtn.setEnabled(true);
+                                    if (!holly6000ViewModel.isTreasureSolutionCommitted() || holly6000ViewModel.isTreasureLogged())
+                                        myActivity.navigationBtn.setEnabled(false);
+                                    if (holly6000ViewModel.getLastPlanetNum() == 0) {
+                                        myActivity.bCodeBtn.setEnabled(true);
+                                        myActivity.treasureHelpRequestBtn.setEnabled(true);
+                                        myActivity.treasureSolutionBtn.setEnabled(true);
+                                    }
+
+                                    retroComputerTextAnimation(getResources().getString(R.string.planet_logged_text));
+                                    break;
+
+                                case MainActivity.ACTION_REQUEST_HELP:
+                                    holly6000ViewModel.setHelpRequested(true);
+                                    newTextToDisplay = getResources().getString(R.string.help_starting_text);
+                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.HELP_COLUMN];
+                                    retroComputerTextAnimation(newTextToDisplay);
+                                    break;
+
+                                case MainActivity.ACTION_REGUEST_SOLUTION:
+                                    holly6000ViewModel.setSolutionRequested(true);
+
+                                    myActivity.helpRequestBtn.setEnabled(false);
+
+                                    newTextToDisplay = getResources().getString(R.string.solution_starting_text);
+                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
+                                    retroComputerTextAnimation(newTextToDisplay);
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_SOLUTION:
+                                    holly6000ViewModel.setSolutionCommitted(true);
+
+                                    myActivity.logPlanetBtn.setEnabled(true);
+                                    myActivity.helpRequestBtn.setEnabled(false);
+                                    myActivity.solutionRequestBtn.setEnabled(false);
+                                    myActivity.solutionBtn.setEnabled(false);
+                                    myActivity.navigationBtn.setEnabled(true);
+
+                                    retroComputerTextAnimation(getResources().getString(R.string.solution_logged_text));
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_B_CODE:
+                                    retroComputerTextAnimation(getResources().getString(R.string.b_code_logged_text));
+                                    break;
+
+                                case MainActivity.ACTION_REQUEST_TREASURE_HELP:
+                                    holly6000ViewModel.setTreasureHelpRequested(true);
+                                    newTextToDisplay = getResources().getString(R.string.treasure_help_starting_text);
+                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.HELP_COLUMN];
+                                    retroComputerTextAnimation(newTextToDisplay);
+                                    break;
+
+                                case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
+                                    holly6000ViewModel.setTreasureSolutionCommitted(true);
+
+                                    myActivity.navigationBtn.setEnabled(true);
+                                    myActivity.treasureHelpRequestBtn.setEnabled(false);
+                                    myActivity.treasureSolutionBtn.setEnabled(false);
+                                    myActivity.logTreasureBtn.setEnabled(true);
+
+                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_solution_logged_text));
+                                    break;
+
+                                case MainActivity.ACTION_LOG_TREASURE:
+                                    holly6000ViewModel.setTreasureLogged(true);
+
+                                    myActivity.treasureHelpRequestBtn.setEnabled(false);
+                                    myActivity.treasureSolutionBtn.setEnabled(false);
+                                    myActivity.logTreasureBtn.setEnabled(false);
+                                    if (!holly6000ViewModel.isSolutionCommitted())
+                                        myActivity.navigationBtn.setEnabled(false);
+
+                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_logged_text));
+                                    break;
+                            }
+
+                        }
+                        Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        stopLoadingProgress();
+                        restoreButtonsState(currentBtnsState);
+                        Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
+                        //error.printStackTrace();
+                        noInternetConnectionWarning();
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> parmas = new HashMap<>();
+
+                int planetNum = holly6000ViewModel.getLastPlanetNum();
+                String planetName;
+
+                switch (holly6000ViewModel.getCurrentAction()) {
+                    case MainActivity.ACTION_LOG_PLANET:
+                        planetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
+                        break;
+
+                    case MainActivity.ACTION_COMMIT_B_CODE:
+                        planetName = submittedBCode;
+                        break;
+
+                    default:
+                        planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];
+                        break;
+                }
+
+                /*if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET))
+                    planetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
+                else
+                    planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];*/
+
+                //here we pass params
+                parmas.put("action", "logAction");
+                parmas.put("currentAction", holly6000ViewModel.getCurrentAction());
+                parmas.put("team", holly6000ViewModel.getTeamName());
+                parmas.put("planet", planetName);
+
+                return parmas;
+            }
+        };
+
+        int socketTimeOut = 15000;// u can change this .. here it is 15 seconds
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        stringRequest.setRetryPolicy(policy);
+
+        RequestQueue queue = Volley.newRequestQueue(myActivity);
+        queue.add(stringRequest);
+
     }
 
     public void retroComputerTextAnimation(String message) {
@@ -341,7 +743,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         promptTVText = "_";
                         promptTV.setText(promptTVText);
                     } else if (holly6000ViewModel.isUserInputAwaited()) {
-                        promptTVText = jmenoTymu + "> ";
+                        promptTVText = holly6000ViewModel.getTeamName() + "> ";
                         promptTV.setText(promptTVText);
 
                         ViewGroup.LayoutParams params = promptTV.getLayoutParams();
@@ -349,19 +751,21 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         promptTV.setLayoutParams(params);
                         promptET.setVisibility(View.VISIBLE);
 
-                        restoreButtonsState(currentBtnsState);
-
                         if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
-                        finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
+                                finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
                             holly6000ViewModel.setDisplayText("");
                             textDisplayTV.setText("");
                             textDisplayTV.setVisibility(View.GONE);
                             promptTV.setText(startingText);
                         }
 
+                        if (!holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_TEAM))
+                            restoreButtonsState(currentBtnsState);
+
                         return;
                     } else {
-                        restoreButtonsState(currentBtnsState);
+                        //if (!holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_TEAM))
+                            restoreButtonsState(currentBtnsState);
 
                         if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
                                 finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
@@ -396,8 +800,32 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
         mHandler.removeCallbacks(characterAdder);
         mHandler.postDelayed(characterAdder, mDelay);
+    }
 
+    public void noInternetConnectionWarning() {
 
+        holly6000ViewModel.setUserInputAwaited(true);
+        holly6000ViewModel.setNewTextToDisplay(getResources().getString(R.string.no_internet_connection_warning));
+
+        retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
+    }
+
+    public void startLoadingProgress() {
+        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
+        promptTV.setText(getResources().getString(R.string.holly6000_monitor_data_loading));
+        promptTV.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.holly6000_monitor_data_loading_animation));
+        promptET.setText("");
+        promptET.setVisibility(View.INVISIBLE);
+        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
+    }
+
+    public void stopLoadingProgress() {
+        holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + getResources().getString(R.string.holly6000_monitor_data_loading));
+        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
+        promptTV.clearAnimation();
+        promptET.setText("");
+        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
+        holly6000ViewModel.setUserInputAwaited(false);
     }
 
     private boolean[] disableAllButtons() {
@@ -426,225 +854,39 @@ public class Holly6000TextDisplayFragment extends Fragment {
         myActivity.logTreasureBtn.setEnabled(false);
         myActivity.notificationsBtn.setEnabled(false);
 
+        myActivity.smallHolly6000Monitor.setEnabled(false);
+
         return currentBtnsState;
     }
 
     private void restoreButtonsState(boolean[] buttonsState) {
         MainActivity myActivity = (MainActivity) getActivity();
+        int planetNum = holly6000ViewModel.getLastPlanetNum();
+        int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
 
-        myActivity.logPlanetBtn.setEnabled(buttonsState[0]);
-        myActivity.helpRequestBtn.setEnabled(buttonsState[1]);
-        myActivity.solutionRequestBtn.setEnabled(buttonsState[2]);
-        myActivity.solutionBtn.setEnabled(buttonsState[3]);
-        myActivity.bCodeBtn.setEnabled(buttonsState[4]);
-        myActivity.navigationBtn.setEnabled(buttonsState[5]);
-        myActivity.treasureHelpRequestBtn.setEnabled(buttonsState[6]);
-        myActivity.treasureSolutionBtn.setEnabled(buttonsState[7]);
-        myActivity.logTreasureBtn.setEnabled(buttonsState[8]);
-        myActivity.notificationsBtn.setEnabled(buttonsState[9]);
-    }
-
-    private void logAction() {
-        MainActivity myActivity = (MainActivity) getActivity();
-
-        if (!holly6000ViewModel.isInternetAvailable()) {
-            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
-            myActivity.noInternetConnectionWarning();
-            return;
+        if (planetNum != treasureGameDataRow - 1) {
+            myActivity.logPlanetBtn.setEnabled(buttonsState[0]);
+            myActivity.helpRequestBtn.setEnabled(buttonsState[1]);
+            myActivity.solutionRequestBtn.setEnabled(buttonsState[2]);
+            myActivity.solutionBtn.setEnabled(buttonsState[3]);
+            myActivity.bCodeBtn.setEnabled(buttonsState[4]);
+            myActivity.navigationBtn.setEnabled(buttonsState[5]);
+            myActivity.treasureHelpRequestBtn.setEnabled(buttonsState[6]);
+            myActivity.treasureSolutionBtn.setEnabled(buttonsState[7]);
+            myActivity.logTreasureBtn.setEnabled(buttonsState[8]);
         }
 
-        boolean[] currentBtnsState = disableAllButtons();
+        if (planetNum == treasureGameDataRow - 2) {
+            holly6000ViewModel.setSolutionCommitted(true);
 
-        startLoadingProgress();
+            myActivity.logPlanetBtn.setEnabled(true);
+            myActivity.helpRequestBtn.setEnabled(false);
+            myActivity.solutionRequestBtn.setEnabled(false);
+            myActivity.solutionBtn.setEnabled(false);
+        }
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, appScriptURL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        stopLoadingProgress();
-
-                        restoreButtonsState(currentBtnsState);
-
-                        MainActivity myActivity = (MainActivity) getActivity();
-                        int planetNum = holly6000ViewModel.getLastPlanetNum();
-                        int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
-                        String newTextToDisplay = "";
-
-                        Log.d("Log Planet", "response: " + response);
-
-                        String errorSubString = "<!DOC";
-                        int substringLengt = Math.min(response.length(), errorSubString.length());
-                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            Log.d("Log Planet", "error message (logAction -> onResponse): " + response);
-                            myActivity.noInternetConnectionWarning();
-                            return;
-                        } else {
-
-                            switch (holly6000ViewModel.getCurrentAction()) {
-                                case MainActivity.ACTION_LOG_PLANET:
-                                    holly6000ViewModel.setLastPlanetNum(holly6000ViewModel.getLastPlanetNum()+1);
-                                    holly6000ViewModel.setHelpRequested(false);
-                                    holly6000ViewModel.setSolutionRequested(false);
-                                    holly6000ViewModel.setSolutionCommitted(false);
-
-                                    myActivity.logPlanetBtn.setEnabled(false);
-                                    myActivity.helpRequestBtn.setEnabled(true);
-                                    myActivity.solutionRequestBtn.setEnabled(true);
-                                    myActivity.solutionBtn.setEnabled(true);
-                                    if (!holly6000ViewModel.isTreasureSolutionCommitted() || holly6000ViewModel.isTreasureLogged())
-                                        myActivity.navigationBtn.setEnabled(false);
-                                    if (holly6000ViewModel.getLastPlanetNum() == 0) {
-                                        myActivity.bCodeBtn.setEnabled(true);
-                                        myActivity.treasureHelpRequestBtn.setEnabled(true);
-                                        myActivity.treasureSolutionBtn.setEnabled(true);
-                                    }
-
-                                    retroComputerTextAnimation(getResources().getString(R.string.planet_logged_text));
-                                    break;
-
-                                case MainActivity.ACTION_REQUEST_HELP:
-                                    holly6000ViewModel.setHelpRequested(true);
-                                    newTextToDisplay = getResources().getString(R.string.help_starting_text);
-                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.HELP_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
-                                    break;
-
-                                case MainActivity.ACTION_REGUEST_SOLUTION:
-                                    holly6000ViewModel.setSolutionRequested(true);
-
-                                    myActivity.helpRequestBtn.setEnabled(false);
-
-                                    newTextToDisplay = getResources().getString(R.string.solution_starting_text);
-                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
-                                    break;
-
-                                case MainActivity.ACTION_COMMIT_SOLUTION:
-                                    holly6000ViewModel.setSolutionCommitted(true);
-
-                                    myActivity.logPlanetBtn.setEnabled(true);
-                                    myActivity.helpRequestBtn.setEnabled(false);
-                                    myActivity.solutionRequestBtn.setEnabled(false);
-                                    myActivity.solutionBtn.setEnabled(false);
-                                    myActivity.navigationBtn.setEnabled(true);
-
-                                    retroComputerTextAnimation(getResources().getString(R.string.solution_logged_text));
-                                    break;
-
-                                case MainActivity.ACTION_COMMIT_B_CODE:
-                                    retroComputerTextAnimation(getResources().getString(R.string.b_code_logged_text));
-
-                                    break;
-
-                                case MainActivity.ACTION_REQUEST_TREASURE_HELP:
-                                    holly6000ViewModel.setTreasureHelpRequested(true);
-                                    newTextToDisplay = getResources().getString(R.string.treasure_help_starting_text);
-                                    newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.HELP_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
-                                    break;
-
-                                case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
-                                    holly6000ViewModel.setTreasureSolutionCommitted(true);
-
-                                    myActivity.navigationBtn.setEnabled(true);
-                                    myActivity.treasureHelpRequestBtn.setEnabled(false);
-                                    myActivity.treasureSolutionBtn.setEnabled(false);
-                                    myActivity.logTreasureBtn.setEnabled(true);
-
-                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_solution_logged_text));
-                                    break;
-
-                                case MainActivity.ACTION_LOG_TREASURE:
-                                    holly6000ViewModel.setTreasureLogged(true);
-
-                                    myActivity.treasureHelpRequestBtn.setEnabled(false);
-                                    myActivity.treasureSolutionBtn.setEnabled(false);
-                                    myActivity.logTreasureBtn.setEnabled(false);
-                                    if (!holly6000ViewModel.isSolutionCommitted())
-                                        myActivity.navigationBtn.setEnabled(false);
-
-                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_logged_text));
-                                    break;
-                            }
-
-                        }
-                        Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
-                    }
-                },
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        stopLoadingProgress();
-                        restoreButtonsState(currentBtnsState);
-                        Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
-                        //error.printStackTrace();
-                        MainActivity myActivity = (MainActivity) getActivity();
-                        myActivity.noInternetConnectionWarning();
-                    }
-                }
-        ){
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> parmas = new HashMap<>();
-
-                int planetNum = holly6000ViewModel.getLastPlanetNum();
-                String planetName;
-
-                switch (holly6000ViewModel.getCurrentAction()) {
-                    case MainActivity.ACTION_LOG_PLANET:
-                        planetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
-                        break;
-
-                    case MainActivity.ACTION_COMMIT_B_CODE:
-                        planetName = submittedBCode;
-                        break;
-
-                    default:
-                        planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];
-                }
-
-                /*if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET))
-                    planetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
-                else
-                    planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];*/
-
-                //here we pass params
-                parmas.put("action", "logAction");
-                parmas.put("currentAction", holly6000ViewModel.getCurrentAction());
-                parmas.put("team", jmenoTymu);
-                parmas.put("planet", planetName);
-
-                return parmas;
-            }
-        };
-
-        int socketTimeOut = 15000;// u can change this .. here it is 15 seconds
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        stringRequest.setRetryPolicy(policy);
-
-        RequestQueue queue = Volley.newRequestQueue(myActivity);
-        queue.add(stringRequest);
-
-    }
-
-    public void startLoadingProgress() {
-        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
-        promptTV.setText(getResources().getString(R.string.holly6000_monitor_data_loading));
-        promptTV.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.holly6000_monitor_data_loading_animation));
-        promptET.setText("");
-        promptET.setVisibility(View.INVISIBLE);
-        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
-    }
-
-    public void stopLoadingProgress() {
-        holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + getResources().getString(R.string.holly6000_monitor_data_loading));
-        textDisplayTV.setText(holly6000ViewModel.getDisplayText());
-        promptTV.clearAnimation();
-        promptET.setText("");
-        textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
-        holly6000ViewModel.setUserInputAwaited(false);
+        myActivity.notificationsBtn.setEnabled(buttonsState[9]);
+        myActivity.smallHolly6000Monitor.setEnabled(true);
     }
 
     @Override

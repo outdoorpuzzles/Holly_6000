@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Holly 6000</string>
 
+
     <string name="teamLoginTV_string">Vložte kód týmu</string>
     <string name="teamLoginET_string">Kód týmu</string>
     <string name="teamLoginBtn_string">Log team</string>
@@ -10,15 +11,23 @@
     <string name="planetLoginBtn_string">Log planet</string>
 
     <string name="holly6000_monitor_holly_prompt">"Holly 6000&gt; "</string>
+    <string name="holly6000_monitor_unknown_team_name">Unknown user</string>
     <string name="holly6000_monitor_data_loading">&lt;ODESÍLÁM DATA&gt;</string>
     <string name="holly6000_monitor_data_loaded">&lt;DATA ODESLÁNA&gt;</string>
 
     <string name="no_internet_connection_warning">"Spojení s mateřskou lodí nebylo navázáno. Zkuste to prosím později."</string>
     <string name="network_problem_warning">"Holly hlásí, že je někde problém. Zkuste to prosím později. Když to nepůjde, kontatujte mateřskou loď."</string>
 
+    <string name="log_team_and_load_game_data_text">"Zadejte vstupní kód vašeho týmu"</string>
+    <string name="team_logged_and_game_data_loaded_text_1">"Tým "</string>
+    <string name="team_logged_and_game_data_loaded_text_2">" byl úspěšně zalogován"</string>
+    <string name="invalid_team_psw_text">"Vámi zadaný kód není platným kódem žádného týmu. Zkuste to prosím znovu"</string>
+    <string name="duplicate_team_logging_text_1">"Tým "</string>
+    <string name="duplicate_team_logging_text_2">" se již zalogoval na jiném zařízení. Pokud se potřebujete zalogovat na tomto zařízení, kontaktujte mateřskou loď"</string>
+
     <string name="planet_login_text">"Zadejte vstupní kód k planetě "</string>
     <string name="planet_logged_text">Planeta úspěšně zalogována</string>
-    <string name="invalid_planet_code_text">"Vámi zadaný kód není platný vstupní kód k planetě "</string>
+    <string name="invalid_planet_code_text">"Vámi zadaný kód není platným vstupní kódem k planetě "</string>
 
     <string name="help_request_confirmation_text">Skutečně chcete požádat o nápovědu? (Y/N)</string>
     <string name="help_starting_text">"Nápověda k této šifře zní: "</string>
@@ -51,7 +60,7 @@
 
     <string name="treasure_login_text">"Zadejte vstupní kód k pokladu "</string>
     <string name="treasure_logged_text">Poklad úspěšně zalogován</string>
-    <string name="invalid_treasure_code_text">"Vámi zadaný kód není platný vstupní kód k pokladu"</string>
+    <string name="invalid_treasure_code_text">"Vámi zadaný kód není platným vstupní kódem k pokladu"</string>
 
     <string name="holly6000_monitor_caption">Holly 6000</string>
 

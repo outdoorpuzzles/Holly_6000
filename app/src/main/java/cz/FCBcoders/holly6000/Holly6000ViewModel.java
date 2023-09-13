@@ -15,7 +15,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private String currentAction = "";
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwYt-Xt7W6zldeKB2i_yNPwDJKYVzbiWliBHq0Ok2cRbmN7MtsvpD81z60ZWCbj1rZ5Nw/exec";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbxHEZAB1tUSj7Dipj20aIVdrZ0ewWJ_CseURWHAve6LTqf4EGqu3A5E5tj7IgoWE53F3w/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
