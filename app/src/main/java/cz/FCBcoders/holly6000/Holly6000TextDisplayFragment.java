@@ -29,11 +29,13 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import java.text.Collator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 public class Holly6000TextDisplayFragment extends Fragment {
     final String YES = "Y";
@@ -266,6 +268,8 @@ public class Holly6000TextDisplayFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        String newTextToDisplay = "";
+
                         stopLoadingProgress();
 
                         String errorSubString = "<!DOC";
@@ -279,6 +283,16 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         if (response.equals("Chybné PSW")) {
                             holly6000ViewModel.setUserInputAwaited(true);
                             retroComputerTextAnimation(getResources().getString(R.string.invalid_team_psw_text));
+                            return;
+                        }
+
+                        if (response.contains("Dulicate Login")) {
+                            holly6000ViewModel.setUserInputAwaited(false);
+                            newTextToDisplay = getResources().getString(R.string.duplicate_team_logging_text_1);
+                            newTextToDisplay += response.substring(0, response.length()-15);
+                            newTextToDisplay += getResources().getString(R.string.duplicate_team_logging_text_2);
+
+                            retroComputerTextAnimation(newTextToDisplay);
                             return;
                         }
 
@@ -379,7 +393,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                 myActivity.navigationBtn.setEnabled(false);
                         }
 
-                        String newTextToDisplay = getResources().getString(R.string.team_logged_and_game_data_loaded_text_1);
+                        newTextToDisplay = getResources().getString(R.string.team_logged_and_game_data_loaded_text_1);
                         newTextToDisplay += holly6000ViewModel.getTeamName();
                         newTextToDisplay += getResources().getString(R.string.team_logged_and_game_data_loaded_text_2);
 
@@ -440,6 +454,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                 //here we pass params
                 parmas.put("action", "logTeamAndLoadGameData");
                 parmas.put("teamPSW", submittedTeamPSW);
+                parmas.put("GUID", holly6000ViewModel.getGUID());
 
                 return parmas;
             }
@@ -759,13 +774,11 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             promptTV.setText(startingText);
                         }
 
-                        if (!holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_TEAM))
-                            restoreButtonsState(currentBtnsState);
+                        restoreButtonsState(currentBtnsState);
 
                         return;
                     } else {
-                        //if (!holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_TEAM))
-                            restoreButtonsState(currentBtnsState);
+                        restoreButtonsState(currentBtnsState);
 
                         if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
                                 finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
@@ -862,7 +875,12 @@ public class Holly6000TextDisplayFragment extends Fragment {
     private void restoreButtonsState(boolean[] buttonsState) {
         MainActivity myActivity = (MainActivity) getActivity();
         int planetNum = holly6000ViewModel.getLastPlanetNum();
-        int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+
+        int treasureGameDataRow;
+        if (holly6000ViewModel.getGameData() != null)
+            treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+        else
+            return;
 
         if (planetNum != treasureGameDataRow - 1) {
             myActivity.logPlanetBtn.setEnabled(buttonsState[0]);

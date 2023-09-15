@@ -10,7 +10,8 @@ import androidx.lifecycle.ViewModelProvider;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -25,19 +26,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private boolean hollyMsg = true;
@@ -239,11 +230,21 @@ public class MainActivity extends AppCompatActivity {
 
         exitAppOnBackPressed();
 
-        //loadGameData();
-        runAction(ACTION_LOG_TEAM, getResources().getString(R.string.log_team_and_load_game_data_text), true);
-
         animateHolly6000ConsoleItems();
 
+        String GUID = "";
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.contains("GUID")) {
+            GUID = sharedPref.getString("GUID", "");
+        } else {
+            GUID = UUID.randomUUID().toString();
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("GUID", GUID);
+            editor.apply();
+        }
+        holly6000ViewModel.setGUID(GUID);
+
+        runAction(ACTION_LOG_TEAM, getResources().getString(R.string.log_team_and_load_game_data_text), true);
     }
 
     public void runAction(String currentAction, String newTextToDisplay, boolean userInputAwaited) {

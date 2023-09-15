@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.HashMap;
 
 public class Holly6000ViewModel extends ViewModel {
+   String GUID = "";
    private String teamName = "";
    private String submittedPSW = "";
    private String nextPlanet = "";
@@ -15,7 +16,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private String currentAction = "";
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbxHEZAB1tUSj7Dipj20aIVdrZ0ewWJ_CseURWHAve6LTqf4EGqu3A5E5tj7IgoWE53F3w/exec";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwMjX2gfFlAuxrEPyu67FQBsRQO4pqmsJX3ImYaIG7cIVaqY--VpSDMB8fn7k5hUekJEQ/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
@@ -27,9 +28,19 @@ public class Holly6000ViewModel extends ViewModel {
    private boolean treasureSolutionCommitted = false;
    private boolean treasureLogged = false;
    private boolean userInputAwaited = false;
+
    private HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
 
+
    /* Implementace */
+
+   public String getGUID() {
+      return GUID;
+   }
+
+   public void setGUID(String GUID) {
+      this.GUID = GUID;
+   }
 
    public String[][] getGameData() {
       return gameData;
@@ -41,9 +52,11 @@ public class Holly6000ViewModel extends ViewModel {
    public int getLastPlanetNum() {
       return lastPlanetNum;
    }
+
    public void setLastPlanetNum(int lastPlanetNum) {
       this.lastPlanetNum = lastPlanetNum;
    }
+
    public boolean isHelpRequested() {
       return helpRequested;
    }
