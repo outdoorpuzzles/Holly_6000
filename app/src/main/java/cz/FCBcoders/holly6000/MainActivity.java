@@ -32,6 +32,8 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private boolean hollyMsg = true;
+    public static final int VIDEO_FRAGMENT = 0;
+    public static final int TEXT_FRAGMENT = 1;
     public static final int PLANET_NAME_COLUMN = 0;
     public static final int COORDINATES_COLUMN = 1;
     public static final int PLANET_CODE_COLUMN = 2;
@@ -57,11 +59,14 @@ public class MainActivity extends AppCompatActivity {
     Handler digitDisplayHandler = null;
     Runnable digitDisplayRunnable = null;
     Holly6000ViewModel holly6000ViewModel;
+    int currentFragment = VIDEO_FRAGMENT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
 
         logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
         helpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHelpRequestBtn);
@@ -75,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         notificationsBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleNotificationsBtn);
 
         smallHolly6000Monitor = (ImageView) findViewById(R.id.holly6000ConsoleSmallHolly6000Monitor);
+        ImageView smallHolly6000MonitorPicture = (ImageView) findViewById(R.id.holly6000ConsoleHolly6000Head);
+
+        int[][] VIDEO_LIST = holly6000ViewModel.getVIDEO_LIST();
+        final int VIDEO_LIST_LOGIN = 0;
+        final int VIDEO_LIST_HELP = 1;
+        final int VIDEO_LIST_SOLUTION = 2;
+        final int VIDEO_LIST_LOGOFF = 3;
 
         logPlanetBtn.setEnabled(false);
         helpRequestBtn.setEnabled(false);
@@ -103,7 +115,15 @@ public class MainActivity extends AppCompatActivity {
                 if (holly6000ViewModel.isHelpRequested()) {
                     newTextToDisplay = getResources().getString(R.string.help_starting_text);
                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.HELP_COLUMN];
-                    runAction(ACTION_REQUEST_HELP, newTextToDisplay, false);
+                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                    holly6000ViewModel.setVideoToPlay(VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_HELP]);
+
+                    if (currentFragment == TEXT_FRAGMENT) {
+                        runAction(ACTION_REQUEST_HELP, newTextToDisplay, false);
+                    } else {
+                        playVideo();
+                    }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.help_request_confirmation_text);
                     runAction(ACTION_REQUEST_HELP, newTextToDisplay, true);
@@ -119,7 +139,15 @@ public class MainActivity extends AppCompatActivity {
                 if (holly6000ViewModel.isSolutionRequested()) {
                     newTextToDisplay = getResources().getString(R.string.solution_starting_text);
                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
-                    runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, false);
+                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                    holly6000ViewModel.setVideoToPlay(VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_SOLUTION]);
+
+                    if (currentFragment == TEXT_FRAGMENT) {
+                        runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, false);
+                    } else {
+                        playVideo();
+                    }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.solution_request_confirmation_text);
                     runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, true);
@@ -176,7 +204,15 @@ public class MainActivity extends AppCompatActivity {
                 if (holly6000ViewModel.isTreasureHelpRequested()) {
                     newTextToDisplay = getResources().getString(R.string.treasure_help_starting_text);
                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.HELP_COLUMN];
-                    runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, false);
+                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                    holly6000ViewModel.setVideoToPlay(VIDEO_LIST[holly6000ViewModel.getGameData().length - 1][VIDEO_LIST_HELP]);
+
+                    if (currentFragment == TEXT_FRAGMENT) {
+                        runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, false);
+                    } else {
+                        playVideo();
+                    }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.treasure_help_request_confirmation_text);
                     runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, true);
@@ -203,17 +239,28 @@ public class MainActivity extends AppCompatActivity {
         smallHolly6000Monitor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 FragmentManager fm = getSupportFragmentManager();
                 Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
 
                 if (holly6000VideoFragment != null && holly6000VideoFragment.isVisible()) {
+                    smallHolly6000MonitorPicture.setImageResource(R.drawable.holly6000_head);
+                    currentFragment = TEXT_FRAGMENT;
+
                     fm.beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
                             .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
                             .setReorderingAllowed(true)
                             .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
                             .commit();
                 } else {
+                    smallHolly6000MonitorPicture.setImageResource(R.drawable.holly6000_text);
+                    currentFragment = VIDEO_FRAGMENT;
+
+                    //holly6000ViewModel.setVideoToPlay(0);
+
                     fm.beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
                             .replace(R.id.holly6000_monitor_fragment_container, Holly6000VideoFragment.class, null, "Holly6000VideoFragment")
                             .setReorderingAllowed(true)
                             .addToBackStack("Holly6000VideoFragment") // Name can be null
@@ -221,10 +268,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
-
-        //holly6000ViewModel.setTeamName("Kuba");
 
         checkInternetAvailability();
 
@@ -257,12 +300,30 @@ public class MainActivity extends AppCompatActivity {
 
         if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
             fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
                     .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
                     .setReorderingAllowed(true)
                     .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
                     .commit();
         } else {
             holly6000TextDisplayFragment.retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
+        }
+    }
+
+    public void playVideo(){
+
+        FragmentManager fm = getSupportFragmentManager();
+        Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
+
+        if (holly6000VideoFragment == null || !holly6000VideoFragment.isVisible()) {
+            fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
+                    .replace(R.id.holly6000_monitor_fragment_container, Holly6000VideoFragment.class, null, "Holly6000VideoFragment")
+                    .setReorderingAllowed(true)
+                    .addToBackStack("Holly6000VideoFragment") // Name can be null
+                    .commit();
+        } else {
+            holly6000VideoFragment.playVideo();
         }
     }
 
@@ -502,6 +563,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
             fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
                     .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
                     .setReorderingAllowed(true)
                     .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
@@ -522,6 +584,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
             fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
                     .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
                     .setReorderingAllowed(true)
                     .commitNow();
@@ -772,5 +835,71 @@ public class MainActivity extends AppCompatActivity {
         };
         digitDisplayHandler.removeCallbacks(digitDisplayRunnable);
         digitDisplayHandler.post(digitDisplayRunnable);
+    }
+
+    public boolean[] disableAllButtons() {
+        MainActivity myActivity = (MainActivity) this;
+        boolean[] currentBtnsState = new boolean[10];
+
+        currentBtnsState[0] = myActivity.logPlanetBtn.isEnabled();
+        currentBtnsState[1] = myActivity.helpRequestBtn.isEnabled();
+        currentBtnsState[2] = myActivity.solutionRequestBtn.isEnabled();
+        currentBtnsState[3] = myActivity.solutionBtn.isEnabled();
+        currentBtnsState[4] = myActivity.bCodeBtn.isEnabled();
+        currentBtnsState[5] = myActivity.navigationBtn.isEnabled();
+        currentBtnsState[6] = myActivity.treasureHelpRequestBtn.isEnabled();
+        currentBtnsState[7] = myActivity.treasureSolutionBtn.isEnabled();
+        currentBtnsState[8] = myActivity.logTreasureBtn.isEnabled();
+        currentBtnsState[9] = myActivity.notificationsBtn.isEnabled();
+
+        myActivity.logPlanetBtn.setEnabled(false);
+        myActivity.helpRequestBtn.setEnabled(false);
+        myActivity.solutionRequestBtn.setEnabled(false);
+        myActivity.solutionBtn.setEnabled(false);
+        myActivity.bCodeBtn.setEnabled(false);
+        myActivity.navigationBtn.setEnabled(false);
+        myActivity.treasureHelpRequestBtn.setEnabled(false);
+        myActivity.treasureSolutionBtn.setEnabled(false);
+        myActivity.logTreasureBtn.setEnabled(false);
+        myActivity.notificationsBtn.setEnabled(false);
+
+        myActivity.smallHolly6000Monitor.setEnabled(false);
+
+        return currentBtnsState;
+    }
+
+    public void restoreButtonsState(boolean[] buttonsState) {
+        MainActivity myActivity = (MainActivity) this;
+        int planetNum = holly6000ViewModel.getLastPlanetNum();
+
+        int treasureGameDataRow;
+        if (holly6000ViewModel.getGameData() != null)
+            treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
+        else
+            return;
+
+        if (planetNum != treasureGameDataRow - 1) {
+            myActivity.logPlanetBtn.setEnabled(buttonsState[0]);
+            myActivity.helpRequestBtn.setEnabled(buttonsState[1]);
+            myActivity.solutionRequestBtn.setEnabled(buttonsState[2]);
+            myActivity.solutionBtn.setEnabled(buttonsState[3]);
+            myActivity.bCodeBtn.setEnabled(buttonsState[4]);
+            myActivity.navigationBtn.setEnabled(buttonsState[5]);
+            myActivity.treasureHelpRequestBtn.setEnabled(buttonsState[6]);
+            myActivity.treasureSolutionBtn.setEnabled(buttonsState[7]);
+            myActivity.logTreasureBtn.setEnabled(buttonsState[8]);
+        }
+
+        if (planetNum == treasureGameDataRow - 2) {
+            holly6000ViewModel.setSolutionCommitted(true);
+
+            myActivity.logPlanetBtn.setEnabled(true);
+            myActivity.helpRequestBtn.setEnabled(false);
+            myActivity.solutionRequestBtn.setEnabled(false);
+            myActivity.solutionBtn.setEnabled(false);
+        }
+
+        myActivity.notificationsBtn.setEnabled(buttonsState[9]);
+        myActivity.smallHolly6000Monitor.setEnabled(true);
     }
 }

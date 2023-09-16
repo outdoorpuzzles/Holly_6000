@@ -13,12 +13,15 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -39,6 +42,11 @@ import java.util.UUID;
 
 public class Holly6000TextDisplayFragment extends Fragment {
     final String YES = "Y";
+    int[][] VIDEO_LIST;
+    final int VIDEO_LIST_LOGIN = 0;
+    final int VIDEO_LIST_HELP = 1;
+    final int VIDEO_LIST_SOLUTION = 2;
+    final int VIDEO_LIST_LOGOFF = 3;
     int mIndex = 0;
     boolean doubleUnderscore = false;
     Runnable characterAdder = null;
@@ -50,6 +58,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
     ScrollView textDisplaySV;
     String appScriptURL;
     String submittedBCode;
+    boolean videoShouldBePlayed = false;
 
     public Holly6000TextDisplayFragment() {
         // Required empty public constructor
@@ -67,9 +76,15 @@ public class Holly6000TextDisplayFragment extends Fragment {
         promptET = (EditText) view.findViewById(R.id.holly6000PromptET);
         textDisplaySV = (ScrollView) view.findViewById(R.id.holly6000TextDisplaySV);
 
+        ImageView smallHolly6000MonitorPicture = (ImageView) getActivity().findViewById(R.id.holly6000ConsoleHolly6000Head);
+        smallHolly6000MonitorPicture.setImageResource(R.drawable.holly6000_head);
+
         holly6000ViewModel = new ViewModelProvider(requireActivity()).get(Holly6000ViewModel.class);
         appScriptURL = holly6000ViewModel.getAppScriptURL();
-        holly6000ViewModel.setTeamName(getResources().getString(R.string.holly6000_monitor_unknown_team_name));
+        VIDEO_LIST = holly6000ViewModel.getVIDEO_LIST();
+
+        if (holly6000ViewModel.getTeamName().equals(""))
+            holly6000ViewModel.setTeamName(getResources().getString(R.string.holly6000_monitor_unknown_team_name));
 
         promptET.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -228,6 +243,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
         textDisplayTV.post(new Runnable() {
             @Override
             public void run() {
+                startPostponedEnterTransition();
                 retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
                 //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, holly6000PromptET, "Kubikula", "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
                 //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... abcdefghijklmnopqrstuvwxyz Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
@@ -247,6 +263,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
         //retroComputerTextAnimation(holly6000TextDisplayTV,"Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
 
+        postponeEnterTransition();
 
         return view;
     }
@@ -260,7 +277,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
             return;
         }
 
-        boolean[] currentBtnsState = disableAllButtons();
+        boolean[] currentBtnsState = myActivity.disableAllButtons();
 
         startLoadingProgress();
 
@@ -393,9 +410,13 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                 myActivity.navigationBtn.setEnabled(false);
                         }
 
+                        holly6000ViewModel.setVideoToPlay(R.raw.holly6000_video);
+                        videoShouldBePlayed = true;
+
                         newTextToDisplay = getResources().getString(R.string.team_logged_and_game_data_loaded_text_1);
                         newTextToDisplay += holly6000ViewModel.getTeamName();
                         newTextToDisplay += getResources().getString(R.string.team_logged_and_game_data_loaded_text_2);
+                        holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
 
                         retroComputerTextAnimation(newTextToDisplay);
 
@@ -440,7 +461,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         stopLoadingProgress();
-                        restoreButtonsState(currentBtnsState);
+                        myActivity.restoreButtonsState(currentBtnsState);
                         Log.d("Log Planet", "networkProblemWarning (loadGameData -> onErrorResponse)" + error.toString());
                         //error.printStackTrace();
                         noInternetConnectionWarning();
@@ -479,7 +500,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
             return;
         }
 
-        boolean[] currentBtnsState = disableAllButtons();
+        boolean[] currentBtnsState = myActivity.disableAllButtons();
 
         startLoadingProgress();
 
@@ -489,11 +510,12 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     public void onResponse(String response) {
                         stopLoadingProgress();
 
-                        restoreButtonsState(currentBtnsState);
+                        myActivity.restoreButtonsState(currentBtnsState);
 
                         int planetNum = holly6000ViewModel.getLastPlanetNum();
                         int treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
                         String newTextToDisplay = "";
+                        int videoToPlay = 0;
 
                         Log.d("Log Planet", "response: " + response);
 
@@ -506,6 +528,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         } else {
 
                             switch (holly6000ViewModel.getCurrentAction()) {
+
                                 case MainActivity.ACTION_LOG_PLANET:
                                     holly6000ViewModel.setLastPlanetNum(holly6000ViewModel.getLastPlanetNum()+1);
                                     holly6000ViewModel.setHelpRequested(false);
@@ -524,14 +547,34 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                         myActivity.treasureSolutionBtn.setEnabled(true);
                                     }
 
-                                    retroComputerTextAnimation(getResources().getString(R.string.planet_logged_text));
+                                    videoToPlay = VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_LOGIN];
+                                    if (videoToPlay != 0) {
+                                        holly6000ViewModel.setVideoToPlay(videoToPlay);
+                                        videoShouldBePlayed = true;
+                                    }
+
+
+                                    newTextToDisplay = getResources().getString(R.string.planet_logged_text);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
 
                                 case MainActivity.ACTION_REQUEST_HELP:
                                     holly6000ViewModel.setHelpRequested(true);
+
                                     newTextToDisplay = getResources().getString(R.string.help_starting_text);
                                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.HELP_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    videoToPlay = VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_HELP];
+                                    if (videoToPlay != 0) {
+                                        holly6000ViewModel.setVideoToPlay(videoToPlay);
+                                        playVideo(videoToPlay);
+                                    } else
+                                        retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
 
                                 case MainActivity.ACTION_REGUEST_SOLUTION:
@@ -541,7 +584,15 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
                                     newTextToDisplay = getResources().getString(R.string.solution_starting_text);
                                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[planetNum][MainActivity.SOLUTION_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    videoToPlay = VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_SOLUTION];
+                                    if (videoToPlay != 0) {
+                                        holly6000ViewModel.setVideoToPlay(videoToPlay);
+                                        playVideo(videoToPlay);
+                                    } else
+                                        retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
 
                                 case MainActivity.ACTION_COMMIT_SOLUTION:
@@ -553,7 +604,17 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                     myActivity.solutionBtn.setEnabled(false);
                                     myActivity.navigationBtn.setEnabled(true);
 
-                                    retroComputerTextAnimation(getResources().getString(R.string.solution_logged_text));
+                                    videoToPlay = VIDEO_LIST[holly6000ViewModel.getLastPlanetNum()][VIDEO_LIST_LOGOFF];
+                                    if (videoToPlay != 0) {
+                                        holly6000ViewModel.setVideoToPlay(videoToPlay);
+                                        videoShouldBePlayed = true;
+                                    }
+
+                                    newTextToDisplay = getResources().getString(R.string.solution_logged_text);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
 
                                 case MainActivity.ACTION_COMMIT_B_CODE:
@@ -562,9 +623,15 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
                                 case MainActivity.ACTION_REQUEST_TREASURE_HELP:
                                     holly6000ViewModel.setTreasureHelpRequested(true);
+
                                     newTextToDisplay = getResources().getString(R.string.treasure_help_starting_text);
                                     newTextToDisplay = newTextToDisplay + holly6000ViewModel.getGameData()[treasureGameDataRow][MainActivity.HELP_COLUMN];
-                                    retroComputerTextAnimation(newTextToDisplay);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    videoToPlay = VIDEO_LIST[treasureGameDataRow][VIDEO_LIST_HELP];
+                                    holly6000ViewModel.setVideoToPlay(videoToPlay);
+                                    playVideo(videoToPlay);
+
                                     break;
 
                                 case MainActivity.ACTION_COMMIT_TREASURE_SOLUTION:
@@ -575,7 +642,14 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                     myActivity.treasureSolutionBtn.setEnabled(false);
                                     myActivity.logTreasureBtn.setEnabled(true);
 
-                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_solution_logged_text));
+                                    holly6000ViewModel.setVideoToPlay(VIDEO_LIST[treasureGameDataRow][VIDEO_LIST_LOGOFF]);
+                                    videoShouldBePlayed = true;
+
+                                    newTextToDisplay = getResources().getString(R.string.treasure_solution_logged_text);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
 
                                 case MainActivity.ACTION_LOG_TREASURE:
@@ -587,7 +661,14 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                     if (!holly6000ViewModel.isSolutionCommitted())
                                         myActivity.navigationBtn.setEnabled(false);
 
-                                    retroComputerTextAnimation(getResources().getString(R.string.treasure_logged_text));
+                                    holly6000ViewModel.setVideoToPlay(VIDEO_LIST[treasureGameDataRow][VIDEO_LIST_LOGIN]);
+                                    videoShouldBePlayed = true;
+
+                                    newTextToDisplay = getResources().getString(R.string.treasure_logged_text);
+                                    holly6000ViewModel.setNewTextToDisplay(newTextToDisplay);
+
+                                    retroComputerTextAnimation(newTextToDisplay);
+
                                     break;
                             }
 
@@ -600,7 +681,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         stopLoadingProgress();
-                        restoreButtonsState(currentBtnsState);
+                        myActivity.restoreButtonsState(currentBtnsState);
                         Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
                         //error.printStackTrace();
                         noInternetConnectionWarning();
@@ -653,15 +734,34 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
     }
 
+    public void playVideo(int videoToPlay){
+        holly6000ViewModel.setVideoToPlay(videoToPlay);
+
+        FragmentManager fm = getParentFragmentManager();
+        Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
+
+        if (holly6000VideoFragment == null || !holly6000VideoFragment.isVisible()) {
+            fm.beginTransaction()
+                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
+                    .replace(R.id.holly6000_monitor_fragment_container, Holly6000VideoFragment.class, null, "Holly6000VideoFragment")
+                    .setReorderingAllowed(true)
+                    .addToBackStack("Holly6000VideoFragment") // Name can be null
+                    .commit();
+        } else {
+            holly6000VideoFragment.playVideo();
+        }
+    }
+
     public void retroComputerTextAnimation(String message) {
-        long mDelay = 10;
+        MainActivity myActivity = (MainActivity) getActivity();
+        long mDelay = 50;
         int firstCursorBlinks = 3;
         doubleUnderscore = false;
 
         if (message.endsWith("\n"))
             message = message.substring(0,message.length()-1);
 
-        boolean[] currentBtnsState = disableAllButtons();
+        boolean[] currentBtnsState = myActivity.disableAllButtons();
 
         TextPaint textPaint;
         int letterWidth, textViewWidth;
@@ -734,6 +834,8 @@ public class Holly6000TextDisplayFragment extends Fragment {
         characterAdder = new Runnable() {
             @Override
             public void run() {
+                Handler videoHandler;
+                final int VIDEO_DELAY = 750;
                 String promptTVText = promptTV.getText().toString();
                 if (Character.compare(wholeMessageWithBreakLines.charAt(mIndex), '\n') == 0) {
                     // tohle if je tam jenom kvůli tomu, aby to na konci zprávy neodřádkovalo, pokud se nečeká input od uživatele
@@ -774,11 +876,22 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             promptTV.setText(startingText);
                         }
 
-                        restoreButtonsState(currentBtnsState);
+
+                        if (videoShouldBePlayed) {
+                            videoShouldBePlayed = false;
+
+                            videoHandler = new Handler();
+                            videoHandler.postDelayed(new Runnable() {
+                                public void run() {
+                                    myActivity.restoreButtonsState(currentBtnsState);
+                                    playVideo(holly6000ViewModel.getVideoToPlay());
+                                }
+                            }, VIDEO_DELAY);
+                        } else
+                            myActivity.restoreButtonsState(currentBtnsState);
 
                         return;
                     } else {
-                        restoreButtonsState(currentBtnsState);
 
                         if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
                                 finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
@@ -787,6 +900,19 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             textDisplayTV.setVisibility(View.GONE);
                             promptTV.setText(startingText);
                         }
+
+                        if (videoShouldBePlayed) {
+                            videoShouldBePlayed = false;
+
+                            videoHandler = new Handler();
+                            videoHandler.postDelayed(new Runnable() {
+                                public void run() {
+                                    myActivity.restoreButtonsState(currentBtnsState);
+                                    playVideo(holly6000ViewModel.getVideoToPlay());
+                                }
+                            }, VIDEO_DELAY);
+                        } else
+                            myActivity.restoreButtonsState(currentBtnsState);
 
                         return;
                     }
@@ -836,75 +962,10 @@ public class Holly6000TextDisplayFragment extends Fragment {
         holly6000ViewModel.setDisplayText(holly6000ViewModel.getDisplayText() + "\n" + getResources().getString(R.string.holly6000_monitor_data_loading));
         textDisplayTV.setText(holly6000ViewModel.getDisplayText());
         promptTV.clearAnimation();
+        promptTV.setText("");
         promptET.setText("");
         textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
         holly6000ViewModel.setUserInputAwaited(false);
-    }
-
-    private boolean[] disableAllButtons() {
-        MainActivity myActivity = (MainActivity) getActivity();
-        boolean[] currentBtnsState = new boolean[10];
-
-        currentBtnsState[0] = myActivity.logPlanetBtn.isEnabled();
-        currentBtnsState[1] = myActivity.helpRequestBtn.isEnabled();
-        currentBtnsState[2] = myActivity.solutionRequestBtn.isEnabled();
-        currentBtnsState[3] = myActivity.solutionBtn.isEnabled();
-        currentBtnsState[4] = myActivity.bCodeBtn.isEnabled();
-        currentBtnsState[5] = myActivity.navigationBtn.isEnabled();
-        currentBtnsState[6] = myActivity.treasureHelpRequestBtn.isEnabled();
-        currentBtnsState[7] = myActivity.treasureSolutionBtn.isEnabled();
-        currentBtnsState[8] = myActivity.logTreasureBtn.isEnabled();
-        currentBtnsState[9] = myActivity.notificationsBtn.isEnabled();
-
-        myActivity.logPlanetBtn.setEnabled(false);
-        myActivity.helpRequestBtn.setEnabled(false);
-        myActivity.solutionRequestBtn.setEnabled(false);
-        myActivity.solutionBtn.setEnabled(false);
-        myActivity.bCodeBtn.setEnabled(false);
-        myActivity.navigationBtn.setEnabled(false);
-        myActivity.treasureHelpRequestBtn.setEnabled(false);
-        myActivity.treasureSolutionBtn.setEnabled(false);
-        myActivity.logTreasureBtn.setEnabled(false);
-        myActivity.notificationsBtn.setEnabled(false);
-
-        myActivity.smallHolly6000Monitor.setEnabled(false);
-
-        return currentBtnsState;
-    }
-
-    private void restoreButtonsState(boolean[] buttonsState) {
-        MainActivity myActivity = (MainActivity) getActivity();
-        int planetNum = holly6000ViewModel.getLastPlanetNum();
-
-        int treasureGameDataRow;
-        if (holly6000ViewModel.getGameData() != null)
-            treasureGameDataRow = holly6000ViewModel.getGameData().length - 1;
-        else
-            return;
-
-        if (planetNum != treasureGameDataRow - 1) {
-            myActivity.logPlanetBtn.setEnabled(buttonsState[0]);
-            myActivity.helpRequestBtn.setEnabled(buttonsState[1]);
-            myActivity.solutionRequestBtn.setEnabled(buttonsState[2]);
-            myActivity.solutionBtn.setEnabled(buttonsState[3]);
-            myActivity.bCodeBtn.setEnabled(buttonsState[4]);
-            myActivity.navigationBtn.setEnabled(buttonsState[5]);
-            myActivity.treasureHelpRequestBtn.setEnabled(buttonsState[6]);
-            myActivity.treasureSolutionBtn.setEnabled(buttonsState[7]);
-            myActivity.logTreasureBtn.setEnabled(buttonsState[8]);
-        }
-
-        if (planetNum == treasureGameDataRow - 2) {
-            holly6000ViewModel.setSolutionCommitted(true);
-
-            myActivity.logPlanetBtn.setEnabled(true);
-            myActivity.helpRequestBtn.setEnabled(false);
-            myActivity.solutionRequestBtn.setEnabled(false);
-            myActivity.solutionBtn.setEnabled(false);
-        }
-
-        myActivity.notificationsBtn.setEnabled(buttonsState[9]);
-        myActivity.smallHolly6000Monitor.setEnabled(true);
     }
 
     @Override

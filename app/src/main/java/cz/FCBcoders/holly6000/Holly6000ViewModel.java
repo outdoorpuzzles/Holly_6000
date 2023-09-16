@@ -28,8 +28,23 @@ public class Holly6000ViewModel extends ViewModel {
    private boolean treasureSolutionCommitted = false;
    private boolean treasureLogged = false;
    private boolean userInputAwaited = false;
-
    private HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
+   private int videoToPlay = 0;
+
+   int[][] VIDEO_LIST = {
+           {R.raw.cejch_login, R.raw.cejch_help, R.raw.cejch_solution, R.raw.cejch_logoff},
+           {0, R.raw.trek_help, R.raw.trek_solution, R.raw.trek_logoff},
+           {0, R.raw.theta_help, R.raw.theta_solution, R.raw.theta_logoff},
+           {0, R.raw.sigma__help, R.raw.sigma_solution, R.raw.sigma_logoff},
+           {0, R.raw.mogagon_help, R.raw.mogagon_solution, R.raw.mogagon_logoff},
+           {0, R.raw.adelphi_help, R.raw.adelphi_solution, R.raw.adelphi_logoff},
+           {0, R.raw.sharmutt_help, R.raw.sharmutt_solution, R.raw.sharmutt_logoff},
+           {0, R.raw.argon_help, R.raw.argon_solution, R.raw.argon_logoff},
+           {0, R.raw.psychomesic_help, R.raw.psychomesic_solution, R.raw.psychomesic_logoff},
+           {R.raw.miranda_login, 0, 0, 0},
+           {0, 0, 0, 0},
+           {R.raw.treasure_login, R.raw.treasure_help, 0, R.raw.treasure_logoff}
+   };
 
 
    /* Implementace */
@@ -37,7 +52,6 @@ public class Holly6000ViewModel extends ViewModel {
    public String getGUID() {
       return GUID;
    }
-
    public void setGUID(String GUID) {
       this.GUID = GUID;
    }
@@ -45,6 +59,7 @@ public class Holly6000ViewModel extends ViewModel {
    public String[][] getGameData() {
       return gameData;
    }
+
    public void setGameData(String[][] gameData) {
       this.gameData = gameData;
    }
@@ -52,7 +67,6 @@ public class Holly6000ViewModel extends ViewModel {
    public int getLastPlanetNum() {
       return lastPlanetNum;
    }
-
    public void setLastPlanetNum(int lastPlanetNum) {
       this.lastPlanetNum = lastPlanetNum;
    }
@@ -193,5 +207,17 @@ public class Holly6000ViewModel extends ViewModel {
 
    public void setBCodes(HashMap<String, Boolean> bCodes) {
       this.bCodes = bCodes;
+   }
+
+   public int getVideoToPlay() {
+      return videoToPlay;
+   }
+
+   public void setVideoToPlay(int videoToPlay) {
+      this.videoToPlay = videoToPlay;
+   }
+
+   public int[][] getVIDEO_LIST() {
+      return VIDEO_LIST;
    }
 }

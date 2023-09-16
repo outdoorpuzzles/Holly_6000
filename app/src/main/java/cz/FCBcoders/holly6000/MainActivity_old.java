@@ -84,7 +84,7 @@ public class MainActivity_old extends AppCompatActivity implements DialogInterfa
       //final MediaController mediaController = new MediaController(MainActivity.this, true);
       //mediaController.setEnabled(false);
       //videoView.setMediaController(mediaController);
-      videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.holly2));
+      videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.holly6000_video));
       //videoView.start();
 
         /*videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
