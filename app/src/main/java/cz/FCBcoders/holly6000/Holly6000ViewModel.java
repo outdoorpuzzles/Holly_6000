@@ -10,16 +10,11 @@ import java.util.HashMap;
 public class Holly6000ViewModel extends ViewModel {
    String GUID = "";
    private String teamName = "";
-   private String submittedPSW = "";
-   private String nextPlanet = "";
-   private String correctPlanetPSW = "";
    private String displayText = "";
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private String currentAction = "";
    private final String appScriptURL = "https://script.google.com/macros/s/AKfycbyg0Ahh2Bdq9-WZd6_KbaicaBVT5CuhJEhCLa8jVLKij4SeIXKojCJdJ43PMoZ0_QU6/exec";
-   private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
-           {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
    private int lastPlanetNum = -1;
    private boolean helpRequested = false;
@@ -68,6 +63,7 @@ public class Holly6000ViewModel extends ViewModel {
    public int getLastPlanetNum() {
       return lastPlanetNum;
    }
+
    public void setLastPlanetNum(int lastPlanetNum) {
       this.lastPlanetNum = lastPlanetNum;
    }
@@ -128,30 +124,6 @@ public class Holly6000ViewModel extends ViewModel {
       this.teamName = teamName;
    }
 
-   public String getSubmittedPSW() {
-      return submittedPSW;
-   }
-
-   public void setSubmittedPSW(String submittedPSW) {
-      this.submittedPSW = submittedPSW;
-   }
-
-   public String getNextPlanet() {
-      return nextPlanet;
-   }
-
-   public void setNextPlanet(String nextPlanet) {
-      this.nextPlanet = nextPlanet;
-   }
-
-   public String getCorrectPlanetPSW() {
-      return correctPlanetPSW;
-   }
-
-   public void setCorrectPlanetPSW(String correctPlanetPSW) {
-      this.correctPlanetPSW = correctPlanetPSW;
-   }
-
    public String getDisplayText() {
       return displayText;
    }
@@ -188,10 +160,6 @@ public class Holly6000ViewModel extends ViewModel {
 
    public String getAppScriptURL() {
       return appScriptURL;
-   }
-
-   public String[][] getPlanetCodes() {
-      return planetCodes;
    }
 
    public boolean isUserInputAwaited() {

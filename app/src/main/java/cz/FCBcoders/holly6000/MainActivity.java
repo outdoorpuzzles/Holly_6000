@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,7 +22,6 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -36,7 +34,6 @@ import java.util.Random;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    private boolean hollyMsg = true;
     public static final int VIDEO_FRAGMENT = 0;
     public static final int TEXT_FRAGMENT = 1;
     public static final int PLANET_NAME_COLUMN = 0;
@@ -73,24 +70,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
-        /*holly6000ViewModel.getNewNotification().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    notificationsBtn.setBackgroundResource(R.drawable.news_button_animation);
-                    Drawable notificationsBtnAnimation = notificationsBtn.getBackground();
-                    if (notificationsBtnAnimation instanceof Animatable) {
-                        ((Animatable)notificationsBtnAnimation).start();
-                    }
-                } else {
-                    Drawable notificationsBtnBackground = notificationsBtn.getBackground();
-                    if (notificationsBtnBackground instanceof Animatable) {
-                        ((Animatable)notificationsBtnBackground).stop();
-                        notificationsBtn.setBackgroundResource(R.drawable.button);
-                    }
-                }
-            }
-        });*/
 
         newNotification.observe(this, new Observer<Boolean>() {
             @Override
@@ -284,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 holly6000ViewModel.setCurrentAction(ACTION_GET_NEWS);
 
-                //holly6000ViewModel.getNewNotification().setValue(false);
                 newNotification.setValue(false);
 
                 FragmentManager fm = getSupportFragmentManager();
@@ -473,39 +451,7 @@ public class MainActivity extends AppCompatActivity {
         this.getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    public void noInternetConnectionWarning() {
-
-        holly6000ViewModel.setUserInputAwaited(true);
-        holly6000ViewModel.setNewTextToDisplay(getResources().getString(R.string.no_internet_connection_warning));
-
-        FragmentManager fm = getSupportFragmentManager();
-        Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentByTag("Holly6000TextDisplayFragment");
-
-        if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
-            fm.beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
-                    .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
-                    .setReorderingAllowed(true)
-                    .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
-                    .commit();
-        } else {
-            holly6000TextDisplayFragment.retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
-        }
-    }
-
     public void animateHolly6000ConsoleItems() {
-        // Console controls animations
-        /*ImageView holly6000ConsoleRedSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleRedSquareControl_1);
-        ImageView holly6000ConsoleBlueSquareControl_1 = (ImageView) findViewById(R.id.holly6000ConsoleBlueSquareControl_1);
-
-        Animation holly6000ConsoleRedSquareControl_1Animation = AnimationUtils.loadAnimation(this, R.anim.holly6000_console_controls_animation);
-        Animation holly6000ConsoleBlueSquareControl_1Animation = AnimationUtils.loadAnimation(this, R.anim.holly6000_console_controls_animation);
-
-        holly6000ConsoleRedSquareControl_1Animation.setStartOffset(3000);
-        holly6000ConsoleBlueSquareControl_1Animation.setStartOffset(500);
-
-        holly6000ConsoleRedSquareControl_1.startAnimation(holly6000ConsoleRedSquareControl_1Animation);
-        holly6000ConsoleBlueSquareControl_1.startAnimation(holly6000ConsoleBlueSquareControl_1Animation);*/
 
         // Console controls animators
         AnimatorSet holly6000ConsoleRedSquareControl_1_AS = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.holly6000_console_controls_animator_red_square_1);
@@ -716,13 +662,7 @@ public class MainActivity extends AppCompatActivity {
     public void runConsoleDigitDisplay() {
         Random random = new Random();
         TextView holly6000ConsoleDigitDisplayTV = (TextView) findViewById(R.id.holly6000ConsoleDigitDisplay);
-        /*ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate
-                (new Runnable() {
-                    public void run() {
-                        holly6000ConsoleDigitDisplayTV.setText(String.format(Locale.GERMANY, "%04d", random.nextInt(10000)));
-                    }
-                }, 0, 2, TimeUnit.SECONDS);*/
+
         final int[] randomNumberForDigitDisplay = new int[1];
         digitDisplayHandler = new Handler();
         digitDisplayRunnable = new Runnable() {

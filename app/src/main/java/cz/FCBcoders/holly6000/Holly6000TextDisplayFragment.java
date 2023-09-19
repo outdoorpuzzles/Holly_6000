@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,13 +31,11 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.installations.FirebaseInstallations;
 
 import java.text.Collator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 public class Holly6000TextDisplayFragment extends Fragment {
     final String YES = "Y";
@@ -106,10 +102,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     int planetNum = holly6000ViewModel.getLastPlanetNum();
                     String planetName;
                     int treasureGameDataRow;
-                    /*if (planetNum == -1)
-                        planetName = holly6000ViewModel.getGameData()[0][MainActivity.PLANET_NAME_COLUMN];
-                    else
-                        planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];*/
+
                     String newTextToDisplay = "";
 
                     switch (holly6000ViewModel.getCurrentAction()) {
@@ -127,13 +120,9 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             String nextPlanetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
                             String nextPlanetCode = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_CODE_COLUMN];
                             if (collatorInstance.equals(submittedText, nextPlanetCode)) {
-                                //Toast.makeText(getActivity(),"Zadáno správné řešení", Toast.LENGTH_SHORT).show();
-                                //Log.d("Log Planet", "Last planet num PŘED zalogováním: " + holly6000ViewModel.getLastPlanetNum());
-                                logAction();
-                                //Log.d("Log Planet", "Last planet num PO zalogování: " + holly6000ViewModel.getLastPlanetNum());
 
+                                logAction();
                             } else {
-                                //Toast.makeText(getActivity(),"Blbě, vole! :)", Toast.LENGTH_SHORT).show();
                                 newTextToDisplay = getResources().getString(R.string.invalid_planet_code_text);
                                 newTextToDisplay = newTextToDisplay + nextPlanetName;
                                 holly6000ViewModel.setUserInputAwaited(false);
@@ -263,7 +252,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
         MainActivity myActivity = (MainActivity) getActivity();
 
         if (!holly6000ViewModel.isInternetAvailable()) {
-            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            //Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
             noInternetConnectionWarning();
             return;
         }
@@ -283,7 +272,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         String errorSubString = "<!DOC";
                         int substringLengt = Math.min(response.length(), errorSubString.length());
                         if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
+                            //Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
                             noInternetConnectionWarning();
                             return;
                         }
@@ -303,8 +292,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             retroComputerTextAnimation(newTextToDisplay);
                             return;
                         }
-
-                        //Log.d("Log Planet", "Obdrzel jsem jmeno poslední planety " + response);
 
                         String[] gameDataString = response.split(",",-1);
 
@@ -328,7 +315,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         holly6000ViewModel.setTreasureSolutionCommitted(Boolean.parseBoolean(gameDataString[gameDataItems+8]));
                         holly6000ViewModel.setTreasureLogged(Boolean.parseBoolean(gameDataString[gameDataItems+9]));
 
-                        Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
+                        //Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
 
                         HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
                         for (int i = 0; i < gameDataRows; i++) {
@@ -419,8 +406,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         stopLoadingProgress();
                         myActivity.restoreButtonsState(currentBtnsState);
-                        Log.d("Log Planet", "networkProblemWarning (loadGameData -> onErrorResponse)" + error.toString());
-                        //error.printStackTrace();
+                        //Log.d("Log Planet", "networkProblemWarning (loadGameData -> onErrorResponse)" + error.toString());
                         noInternetConnectionWarning();
                     }
                 }
@@ -452,7 +438,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
         MainActivity myActivity = (MainActivity) getActivity();
 
         if (!holly6000ViewModel.isInternetAvailable()) {
-            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            //Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
             noInternetConnectionWarning();
             return;
         }
@@ -474,12 +460,12 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         String newTextToDisplay = "";
                         int videoToPlay = 0;
 
-                        Log.d("Log Planet", "response: " + response);
+                        //Log.d("Log Planet", "response: " + response);
 
                         String errorSubString = "<!DOC";
                         int substringLengt = Math.min(response.length(), errorSubString.length());
                         if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            Log.d("Log Planet", "error message (logAction -> onResponse): " + response);
+                            //Log.d("Log Planet", "error message (logAction -> onResponse): " + response);
                             noInternetConnectionWarning();
                             return;
                         } else {
@@ -636,7 +622,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             }
 
                         }
-                        Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
+                        //Log.d("Log Planet", "Číslo poslední planety: " + holly6000ViewModel.getLastPlanetNum() + "; helpRequested: " + holly6000ViewModel.isHelpRequested() + "; solutionRequested: " + holly6000ViewModel.isSolutionRequested() + "; solutionCommitted: " + holly6000ViewModel.isSolutionCommitted() + "; treasureHelpRequested: " + holly6000ViewModel.isTreasureHelpRequested() + "; treasureSolutionCommitted: " + holly6000ViewModel.isTreasureSolutionCommitted() + "; treasureLogged: " + holly6000ViewModel.isTreasureLogged());
                     }
                 },
 
@@ -645,8 +631,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         stopLoadingProgress();
                         myActivity.restoreButtonsState(currentBtnsState);
-                        Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
-                        //error.printStackTrace();
+                        //Log.d("Log Planet", "networkProblemWarning (logAction -> onErrorResponse)" + error.toString());
                         noInternetConnectionWarning();
                     }
                 }
@@ -671,11 +656,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];
                         break;
                 }
-
-                /*if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET))
-                    planetName = holly6000ViewModel.getGameData()[planetNum+1][MainActivity.PLANET_NAME_COLUMN];
-                else
-                    planetName = holly6000ViewModel.getGameData()[planetNum][MainActivity.PLANET_NAME_COLUMN];*/
 
                 //here we pass params
                 parmas.put("action", "logAction");
@@ -899,7 +879,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
         MainActivity myActivity = (MainActivity) getActivity();
 
         if (!holly6000ViewModel.isInternetAvailable()) {
-            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            //Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
             noInternetConnectionWarning();
             return;
         }
@@ -919,7 +899,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         String errorSubString = "<!DOC";
                         int substringLengt = Math.min(response.length(), errorSubString.length());
                         if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
+                            //Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
                             noInternetConnectionWarning();
                             return;
                         }
@@ -946,8 +926,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         stopNotificationLoadingProgress();
                         myActivity.restoreButtonsState(currentBtnsState);
-                        Log.d("Log Planet", "networkProblemWarning (loadNotifications -> onErrorResponse)" + error.toString());
-                        //error.printStackTrace();
+                        //Log.d("Log Planet", "networkProblemWarning (loadNotifications -> onErrorResponse)" + error.toString());
                         noInternetConnectionWarning();
                     }
                 }
@@ -1012,7 +991,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        //Toast.makeText(getActivity(),"Fragment zničen", Toast.LENGTH_SHORT).show();
         if (characterAdder != null)
             mHandler.removeCallbacks(characterAdder);
 

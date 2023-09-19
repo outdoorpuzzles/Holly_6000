@@ -2,21 +2,11 @@
     <string name="app_name">Holly 6000</string>
 
 
-    <string name="teamLoginTV_string">Vložte kód týmu</string>
-    <string name="teamLoginET_string">Kód týmu</string>
-    <string name="teamLoginBtn_string">Log team</string>
-
-    <string name="planetLoginTV_string">"Zadejte vstupní kód k planetě "</string>
-    <string name="planetLoginET_string">Kód planety</string>
-    <string name="planetLoginBtn_string">Log planet</string>
-
     <string name="holly6000_monitor_holly_prompt">"Holly 6000&gt; "</string>
     <string name="holly6000_monitor_unknown_team_name">Unknown user</string>
     <string name="holly6000_monitor_data_loading">&lt;ODESÍLÁM DATA&gt;</string>
-    <string name="holly6000_monitor_data_loaded">&lt;DATA ODESLÁNA&gt;</string>
 
     <string name="no_internet_connection_warning">"Spojení s mateřskou lodí nebylo navázáno. Zkuste to prosím později."</string>
-    <string name="network_problem_warning">"Holly hlásí, že je někde problém. Zkuste to prosím později. Když to nepůjde, kontatujte mateřskou loď."</string>
 
     <string name="log_team_and_load_game_data_text">"Zadejte vstupní kód vašeho týmu"</string>
     <string name="team_logged_and_game_data_loaded_text_1">"Tým "</string>

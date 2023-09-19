@@ -15,7 +15,4 @@
     <color name="yellow_control">#FFEA00</color>
     <color name="text_color">#FA0202</color>
     <color name="holly6000_monitor_caption_color">#CD2E2E</color>
-    <color name="cardview_background_color">#A9ABB3</color>
-    <color name="alert_dialog_button_text_color">#3F51B5</color>
-    <color name="alert_dialog_background_color">#FFFBFE</color>
 </resources>

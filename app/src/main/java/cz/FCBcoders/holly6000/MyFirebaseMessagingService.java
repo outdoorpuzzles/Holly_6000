@@ -2,9 +2,7 @@ package cz.FCBcoders.holly6000;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,12 +24,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
       String messageTitle = "";
       String messageBody = "";
 
-      //holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
       newNotification.postValue(true);
 
       if (message.getData().size() > 0) {
 
-         Log.d("Log Planet", "Obsah zprávy" + message.getData());
+         //Log.d("Log Planet", "Obsah zprávy" + message.getData());
 
       }
 
@@ -41,7 +37,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
          messageTitle = message.getNotification().getTitle();
          messageBody = message.getNotification().getBody();
 
-         Log.d("Log Planet", "Message Notification Body: " + message.getNotification().getBody());
+         //Log.d("Log Planet", "Message Notification Body: " + message.getNotification().getBody());
       }
 
       sendNotification(messageTitle, messageBody);
