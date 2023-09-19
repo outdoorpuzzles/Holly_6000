@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.animation.Animator;
@@ -12,6 +15,8 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     Runnable digitDisplayRunnable = null;
     Holly6000ViewModel holly6000ViewModel;
     int currentFragment = VIDEO_FRAGMENT;
+    MutableLiveData<Boolean> newNotification = MyFirebaseMessagingService.newNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         holly6000ViewModel = new ViewModelProvider(this).get(Holly6000ViewModel.class);
+        /*holly6000ViewModel.getNewNotification().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    notificationsBtn.setBackgroundResource(R.drawable.news_button_animation);
+                    Drawable notificationsBtnAnimation = notificationsBtn.getBackground();
+                    if (notificationsBtnAnimation instanceof Animatable) {
+                        ((Animatable)notificationsBtnAnimation).start();
+                    }
+                } else {
+                    Drawable notificationsBtnBackground = notificationsBtn.getBackground();
+                    if (notificationsBtnBackground instanceof Animatable) {
+                        ((Animatable)notificationsBtnBackground).stop();
+                        notificationsBtn.setBackgroundResource(R.drawable.button);
+                    }
+                }
+            }
+        });*/
+
+        newNotification.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    notificationsBtn.setBackgroundResource(R.drawable.news_button_animation);
+                    Drawable notificationsBtnAnimation = notificationsBtn.getBackground();
+                    if (notificationsBtnAnimation instanceof Animatable) {
+                        ((Animatable)notificationsBtnAnimation).start();
+                    }
+                } else {
+                    Drawable notificationsBtnBackground = notificationsBtn.getBackground();
+                    if (notificationsBtnBackground instanceof Animatable) {
+                        ((Animatable)notificationsBtnBackground).stop();
+                        notificationsBtn.setBackgroundResource(R.drawable.button);
+                    }
+                }
+            }
+        });
 
         logPlanetBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleLogPlanetBtn);
         helpRequestBtn = (AppCompatImageButton) findViewById(R.id.holly6000ConsoleHelpRequestBtn);
@@ -122,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     if (currentFragment == TEXT_FRAGMENT) {
                         runAction(ACTION_REQUEST_HELP, newTextToDisplay, false);
                     } else {
-                        playVideo();
+                        playVideo(ACTION_REQUEST_HELP);
                     }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.help_request_confirmation_text);
@@ -146,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     if (currentFragment == TEXT_FRAGMENT) {
                         runAction(ACTION_REGUEST_SOLUTION, newTextToDisplay, false);
                     } else {
-                        playVideo();
+                        playVideo(ACTION_REGUEST_SOLUTION);
                     }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.solution_request_confirmation_text);
@@ -211,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                     if (currentFragment == TEXT_FRAGMENT) {
                         runAction(ACTION_REQUEST_TREASURE_HELP, newTextToDisplay, false);
                     } else {
-                        playVideo();
+                        playVideo(ACTION_REQUEST_TREASURE_HELP);
                     }
                 } else {
                     newTextToDisplay = getResources().getString(R.string.treasure_help_request_confirmation_text);
@@ -236,9 +279,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        notificationsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holly6000ViewModel.setCurrentAction(ACTION_GET_NEWS);
+
+                //holly6000ViewModel.getNewNotification().setValue(false);
+                newNotification.setValue(false);
+
+                FragmentManager fm = getSupportFragmentManager();
+                Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentByTag("Holly6000TextDisplayFragment");
+
+                if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
+                            .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
+                            .setReorderingAllowed(true)
+                            .addToBackStack("Holly6000TextDisplayFragment") // Name can be null
+                            .commit();
+                } else {
+                    holly6000TextDisplayFragment.showNotifications();
+                }
+
+            }
+        });
+
         smallHolly6000Monitor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (holly6000ViewModel.getCurrentAction().equals(ACTION_GET_NEWS))
+                    return;
 
                 FragmentManager fm = getSupportFragmentManager();
                 Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
@@ -310,7 +380,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void playVideo(){
+    public void playVideo(String currentAction){
+        holly6000ViewModel.setCurrentAction(currentAction);
+        holly6000ViewModel.setUserInputAwaited(false);
 
         FragmentManager fm = getSupportFragmentManager();
         Holly6000VideoFragment holly6000VideoFragment = (Holly6000VideoFragment) fm.findFragmentByTag("Holly6000VideoFragment");
@@ -357,157 +429,6 @@ public class MainActivity extends AppCompatActivity {
             digitDisplayHandler.removeCallbacks(digitDisplayRunnable);
     }
 
-    // private void getLastPlanet() {
-    /*private void getLastPlanet() {
-
-        final ProgressDialog loading;
-
-        if (!holly6000ViewModel.isInternetAvailable()) {
-            noInternetConnectionWarning();
-            return;
-        }
-
-        loading =  ProgressDialog.show(this,"Loading","please wait",false,true);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String lastPlanet = response;
-                        String nextPlanet;
-                        loading.dismiss();
-
-                        //Toast.makeText(getBaseContext(), response, Toast.LENGTH_LONG).show();
-                        String errorSubString = "<!DOC";
-                        int substringLengt = Math.min(response.length(), errorSubString.length());
-                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            networkProblemWarning();
-                            return;
-                        }
-
-                        String[][] planetCodes = holly6000ViewModel.getPlanetCodes();
-                        if (lastPlanet.equals("Planeta nenalezena")) {
-                            nextPlanet = planetCodes[0][0];
-                        } else {
-                            byte i;
-                            for (i = 0; i < planetCodes[0].length; i++)
-                                if (planetCodes[0][i].equals(lastPlanet)) {
-                                    break;
-                                }
-                            nextPlanet = planetCodes[0][i + 1];
-                        }
-                        Log.d("Log Planet", "Obdrzel jsem jmeno dalsi planety " + nextPlanet);
-                        //displayLogInstructions(nextPlanet);
-                        holly6000ViewModel.setNextPlanet(nextPlanet);
-
-
-                        byte i;
-                        for (i = 0; i < planetCodes[0].length; i++)
-                            if (planetCodes[0][i].equals(nextPlanet)) {
-                                Log.d("Log Planet", "Porovnavam planetu " + planetCodes[0][i]);
-                                Log.d("Log Planet", "S planetou " + nextPlanet);
-                                break;
-                            }
-                        Log.d("Log Planet", "Dalsi planeta je na pozici " + i);
-                        holly6000ViewModel.setCorrectPlanetPSW(planetCodes[1][i]);
-                        Log.d("Log Planet", "Kod dalsi planety je " + planetCodes[1][i]);
-                        //Toast.makeText(MainActivity.this, holly6000ViewModel.getCorrectPlanetPSW(), Toast.LENGTH_LONG).show();
-                        FragmentManager fm = getSupportFragmentManager();
-                        PlanetLoginDialogFragment planetLoginDialogFragment = new PlanetLoginDialogFragment();
-                        planetLoginDialogFragment.show(fm, "Planet Login Dialog Fragment");
-                    }
-                },
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        networkProblemWarning();
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> parmas = new HashMap<>();
-
-                //here we pass params
-                parmas.put("action", "getLastPlanet");
-                //parmas.put("action", "findLastPlanet");
-                parmas.put("team", holly6000ViewModel.getTeamName());
-                Log.d("Log Planet", "Posilam jmeno tymu " + holly6000ViewModel.getTeamName());
-
-                return parmas;
-            }
-        };
-
-        int socketTimeOut = 15000;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-
-        stringRequest.setRetryPolicy(policy);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(stringRequest);
-
-    }*/
-
-    //private void writeToDatabase() {
-    /*private void writeToDatabase() {
-
-        final ProgressDialog loading = ProgressDialog.show(this, "Adding Item", "Please wait");
-        final String planetLogCodeTVtext = planetLogCodeET.getText().toString().trim();
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        loading.dismiss();
-                        Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
-                        //Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                        //startActivity(intent);
-                        String errorSubString = "<!DOC";
-                        int substringLengt = Math.min(response.length(), errorSubString.length());
-                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
-                            networkProblemWarning();
-                            return;
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
-                        MainActivity myActivity = (MainActivity) getActivity();
-                        myActivity.networkProblemWarning();
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> parmas = new HashMap<>();
-
-                //here we pass params
-                parmas.put("action", "logPlanet");
-                //parmas.put("action", "getLastPlanet");
-                parmas.put("team", "FCB");
-                parmas.put("planet", planetLogCodeTVtext);
-
-                return parmas;
-            }
-        };
-
-        int socketTimeOut = 15000;// u can change this .. here it is 15 seconds
-
-        RetryPolicy retryPolicy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        stringRequest.setRetryPolicy(retryPolicy);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        queue.add(stringRequest);
-
-
-    }*/
-
     public void checkInternetAvailability() {
         // Ověří konektivitu internetu
         NetworkRequest networkRequest = new NetworkRequest.Builder()
@@ -552,7 +473,6 @@ public class MainActivity extends AppCompatActivity {
         this.getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    //public void noInternetConnectionWarning() {
     public void noInternetConnectionWarning() {
 
         holly6000ViewModel.setUserInputAwaited(true);
@@ -572,26 +492,6 @@ public class MainActivity extends AppCompatActivity {
             holly6000TextDisplayFragment.retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
         }
     }
-
-    //public void networkProblemWarning() {
-   /* public void networkProblemWarning() {
-
-        holly6000ViewModel.setUserInputAwaited(true);
-        holly6000ViewModel.setNewTextToDisplay(getResources().getString(R.string.network_problem_warning));
-
-        FragmentManager fm = getSupportFragmentManager();
-        Holly6000TextDisplayFragment holly6000TextDisplayFragment = (Holly6000TextDisplayFragment) fm.findFragmentByTag("Holly6000TextDisplayFragment");
-
-        if (holly6000TextDisplayFragment == null || !holly6000TextDisplayFragment.isVisible()) {
-            fm.beginTransaction()
-                    .setCustomAnimations(R.anim.fragment_transition_enter, R.anim.fragment_transition_exit)
-                    .replace(R.id.holly6000_monitor_fragment_container, Holly6000TextDisplayFragment.class, null, "Holly6000TextDisplayFragment")
-                    .setReorderingAllowed(true)
-                    .commitNow();
-        } else {
-            holly6000TextDisplayFragment.retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
-        }
-    }*/
 
     public void animateHolly6000ConsoleItems() {
         // Console controls animations

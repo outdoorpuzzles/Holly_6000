@@ -2,6 +2,7 @@ package cz.FCBcoders.holly6000;
 
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class Holly6000ViewModel extends ViewModel {
    private String newTextToDisplay = "";
    private boolean internetAvailable = false;
    private String currentAction = "";
-   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbwMjX2gfFlAuxrEPyu67FQBsRQO4pqmsJX3ImYaIG7cIVaqY--VpSDMB8fn7k5hUekJEQ/exec";
+   private final String appScriptURL = "https://script.google.com/macros/s/AKfycbyg0Ahh2Bdq9-WZd6_KbaicaBVT5CuhJEhCLa8jVLKij4SeIXKojCJdJ43PMoZ0_QU6/exec";
    private final String[][] planetCodes = {{"Merkur", "Venuše", "Země", "Mars", "Jupiter", "Saturn", "Uran", "Neptun"},
            {"Kod1", "Kod2", "Kod3", "Kod4", "Kod5", "Kod6", "Kod7", "Kod8"}};
    private String[][] gameData = null;
@@ -35,7 +36,7 @@ public class Holly6000ViewModel extends ViewModel {
            {R.raw.cejch_login, R.raw.cejch_help, R.raw.cejch_solution, R.raw.cejch_logoff},
            {0, R.raw.trek_help, R.raw.trek_solution, R.raw.trek_logoff},
            {0, R.raw.theta_help, R.raw.theta_solution, R.raw.theta_logoff},
-           {0, R.raw.sigma__help, R.raw.sigma_solution, R.raw.sigma_logoff},
+           {0, R.raw.sigma_help, R.raw.sigma_solution, R.raw.sigma_logoff},
            {0, R.raw.mogagon_help, R.raw.mogagon_solution, R.raw.mogagon_logoff},
            {0, R.raw.adelphi_help, R.raw.adelphi_solution, R.raw.adelphi_logoff},
            {0, R.raw.sharmutt_help, R.raw.sharmutt_solution, R.raw.sharmutt_logoff},

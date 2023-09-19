@@ -27,7 +27,7 @@
 
     <string name="planet_login_text">"Zadejte vstupní kód k planetě "</string>
     <string name="planet_logged_text">Planeta úspěšně zalogována</string>
-    <string name="invalid_planet_code_text">"Vámi zadaný kód není platným vstupní kódem k planetě "</string>
+    <string name="invalid_planet_code_text">"Vámi zadaný kód není platným vstupním kódem k planetě "</string>
 
     <string name="help_request_confirmation_text">Skutečně chcete požádat o nápovědu? (Y/N)</string>
     <string name="help_starting_text">"Nápověda k této šifře zní: "</string>
@@ -62,7 +62,11 @@
     <string name="treasure_logged_text">Poklad úspěšně zalogován</string>
     <string name="invalid_treasure_code_text">"Vámi zadaný kód není platným vstupní kódem k pokladu"</string>
 
-    <string name="holly6000_monitor_caption">Holly 6000</string>
+    <string name="last_planet_goodbye_text">"Gratuluji, dostali jste se zpátky na Zemi! Mise splněna a Holly končí…"</string>
+
+    <string name="no_news_text">"Dosud jsem neobdržela žádné zprávy z mateřské lodi"</string>
 
     <string name="app_exit_warning">"Opětovným stiskem zpět ukončíte aplikaci Holly 6000"</string>
+
+    <string name="holly6000_monitor_caption">Holly 6000</string>
 </resources>

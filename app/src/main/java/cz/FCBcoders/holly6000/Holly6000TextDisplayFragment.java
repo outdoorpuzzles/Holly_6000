@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextPaint;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class Holly6000TextDisplayFragment extends Fragment {
     Handler mHandler = null;
     String holly0000DisplayTextWithNewLine;
     Holly6000ViewModel holly6000ViewModel;
-    TextView textDisplayTV, promptTV;
+    TextView notificationsTV, textDisplayTV, promptTV;
     EditText promptET;
     ScrollView textDisplaySV;
     String appScriptURL;
@@ -69,7 +70,8 @@ public class Holly6000TextDisplayFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_holly6000_text_display, container, false);
 
-        //Toast.makeText(getActivity(),"Fragment zobrazen", Toast.LENGTH_SHORT).show();
+        notificationsTV = (TextView) view.findViewById(R.id.holly6000NotificationsTV);
+        notificationsTV.setMovementMethod(new ScrollingMovementMethod());
 
         textDisplayTV = (TextView) view.findViewById(R.id.holly6000TextDisplayTV);
         promptTV = (TextView) view.findViewById(R.id.holly6000PromptTV);
@@ -244,24 +246,13 @@ public class Holly6000TextDisplayFragment extends Fragment {
             @Override
             public void run() {
                 startPostponedEnterTransition();
-                retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
-                //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, holly6000PromptET, "Kubikula", "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
-                //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... abcdefghijklmnopqrstuvwxyz Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
-                //retroComputerTextAnimation(holly6000TextDisplayTV, holly6000PromptTV, "Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
-                //retroComputerTextAnimation(holly6000TextDisplaySV, holly6000TextDisplayTV, holly6000PromptTV, "Kuba Kubikula","kuk bude sfghs Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer vulputate sem a nibh rutrum consequat. Suspendisse sagittis ultrices augue. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Mauris tincidunt sem sed arcu. Nulla turpis magna, cursus sit amet, suscipit a, interdum id, felis. Etiam posuere lacus quis dolor. Suspendisse nisl. Duis viverra diam non justo. Pellentesque arcu. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. In enim a arcu imperdiet malesuada. Aliquam ante.");
+
+                if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_GET_NEWS))
+                    showNotifications();
+                else
+                    retroComputerTextAnimation(holly6000ViewModel.getNewTextToDisplay());
             }
         });
-        //holly6000TextDisplayTV.setText("Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
-        //holly6000TextDisplayTV.setText("Small text... Small text... Small text... Small text... Small text... Small text... Small text...");
-        //holly6000TextDisplayTV.setVisibility(View.VISIBLE); holly6000TextDisplayTV.setText("Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... Large text... ");
-        //holly6000TextDisplayTV.setVisibility(View.VISIBLE); holly6000TextDisplayTV.setText("Příliš žluťoučký kůň úpěl ďábelské ódy");
-        //holly6000TextDisplayTV.setVisibility(View.VISIBLE); holly6000TextDisplayTV.setText("aaaaaaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbbbbbbbbb cccccccccccccccccccccccccc");
-        //holly6000PromptTV.setText("Pokus");
-        //holly6000TextDisplayTV.setMovementMethod(new ScrollingMovementMethod());
-        //holly6000TextDisplayTV.setMovementMethod(new ScrollingMovementMethod());
-
-
-        //retroComputerTextAnimation(holly6000TextDisplayTV,"Ahoj, já jsem Holly a mám IQ 6000... Ahoj, já jsem Holly a mám IQ 6000... new");
 
         postponeEnterTransition();
 
@@ -420,40 +411,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
 
                         retroComputerTextAnimation(newTextToDisplay);
 
-
-                        /*String[][] gameData = holly6000ViewModel.getPlanetCodes();
-                        if (lastPlanet.equals("Planeta nenalezena")) {
-                            nextPlanet = gameData[0][0];
-                        } else {
-                            byte i;
-                            for (i = 0; i < gameData[0].length; i++)
-                                if (gameData[0][i].equals(lastPlanet)) {
-                                    break;
-                                }
-                            nextPlanet = gameData[0][i + 1];
-                        }
-                        Log.d("Log Planet", "Obdrzel jsem jmeno dalsi planety " + nextPlanet);
-                        //displayLogInstructions(nextPlanet);
-                        holly6000ViewModel.setNextPlanet(nextPlanet);
-
-
-                        byte i;
-                        for (i = 0; i < gameData[0].length; i++)
-                            if (gameData[0][i].equals(nextPlanet)) {
-                                Log.d("Log Planet", "Porovnavam planetu " + gameData[0][i]);
-                                Log.d("Log Planet", "S planetou " + nextPlanet);
-                                break;
-                            }
-                        Log.d("Log Planet", "Dalsi planeta je na pozici " + i);
-                        holly6000ViewModel.setCorrectPlanetPSW(gameData[1][i]);
-                        Log.d("Log Planet", "Kod dalsi planety je " + gameData[1][i]);
-                        //Toast.makeText(MainActivity.this, holly6000ViewModel.getCorrectPlanetPSW(), Toast.LENGTH_LONG).show();
-                        FragmentManager fm = getSupportFragmentManager();
-                        PlanetLoginDialogFragment planetLoginDialogFragment = new PlanetLoginDialogFragment();
-                        planetLoginDialogFragment.show(fm, "Planet Login Dialog Fragment");*/
-
-                        //restoreButtonsState(currentBtnsState);
-
                     }
                 },
 
@@ -539,9 +496,10 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                     myActivity.helpRequestBtn.setEnabled(true);
                                     myActivity.solutionRequestBtn.setEnabled(true);
                                     myActivity.solutionBtn.setEnabled(true);
-                                    if (!holly6000ViewModel.isTreasureSolutionCommitted() || holly6000ViewModel.isTreasureLogged())
+                                    if ((!holly6000ViewModel.isTreasureSolutionCommitted() || holly6000ViewModel.isTreasureLogged()) &&
+                                            (holly6000ViewModel.getLastPlanetNum() != treasureGameDataRow - 2))
                                         myActivity.navigationBtn.setEnabled(false);
-                                    if (holly6000ViewModel.getLastPlanetNum() == 0) {
+                                    if (holly6000ViewModel.getLastPlanetNum() == 1) {
                                         myActivity.bCodeBtn.setEnabled(true);
                                         myActivity.treasureHelpRequestBtn.setEnabled(true);
                                         myActivity.treasureSolutionBtn.setEnabled(true);
@@ -618,6 +576,11 @@ public class Holly6000TextDisplayFragment extends Fragment {
                                     break;
 
                                 case MainActivity.ACTION_COMMIT_B_CODE:
+                                    HashMap<String, Boolean> bCodes = new HashMap<String, Boolean>();
+                                    bCodes = holly6000ViewModel.getBCodes();
+                                    bCodes.put(submittedBCode, true);
+                                    holly6000ViewModel.setBCodes(bCodes);
+
                                     retroComputerTextAnimation(getResources().getString(R.string.b_code_logged_text));
                                     break;
 
@@ -757,6 +720,10 @@ public class Holly6000TextDisplayFragment extends Fragment {
         long mDelay = 50;
         int firstCursorBlinks = 3;
         doubleUnderscore = false;
+        mHandler = new Handler();
+        String finalMessage = message;
+
+        notificationsTV.setVisibility(View.INVISIBLE);
 
         if (message.endsWith("\n"))
             message = message.substring(0,message.length()-1);
@@ -796,13 +763,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
         else
             holly6000ViewModel.setDisplayText(startingText + message);
 
-        /* vyřešeno v předchozím if
-        if (!holly0000DisplayText.equals("")) {
-            textDisplayTV.setVisibility(View.VISIBLE);
-            textDisplayTV.setText(holly0000DisplayText);
-            textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
-        }*/
-
         String wholeString = promptTV.getText() + message;
         int wholeStringLength = wholeString.length();
         char[] wholeStringCharArray = wholeString.toCharArray();
@@ -829,8 +789,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
         final String wholeMessageWithBreakLines = String.valueOf(wholeStringCharArray) + "\n";
         mIndex = startingTextLength - firstCursorBlinks;
 
-        mHandler = new Handler();
-        String finalMessage = message;
         characterAdder = new Runnable() {
             @Override
             public void run() {
@@ -868,15 +826,6 @@ public class Holly6000TextDisplayFragment extends Fragment {
                         promptTV.setLayoutParams(params);
                         promptET.setVisibility(View.VISIBLE);
 
-                        if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
-                                finalMessage.equals(getResources().getString(R.string.planet_logged_text))) {
-                            holly6000ViewModel.setDisplayText("");
-                            textDisplayTV.setText("");
-                            textDisplayTV.setVisibility(View.GONE);
-                            promptTV.setText(startingText);
-                        }
-
-
                         if (videoShouldBePlayed) {
                             videoShouldBePlayed = false;
 
@@ -913,6 +862,11 @@ public class Holly6000TextDisplayFragment extends Fragment {
                             }, VIDEO_DELAY);
                         } else
                             myActivity.restoreButtonsState(currentBtnsState);
+
+                        if (holly6000ViewModel.getCurrentAction().equals(MainActivity.ACTION_LOG_PLANET) &&
+                                (holly6000ViewModel.getLastPlanetNum() == holly6000ViewModel.getGameData().length - 2) &&
+                                finalMessage.equals(getResources().getString(R.string.planet_logged_text)))
+                            retroComputerTextAnimation(getResources().getString(R.string.last_planet_goodbye_text));
 
                         return;
                     }
@@ -941,6 +895,83 @@ public class Holly6000TextDisplayFragment extends Fragment {
         mHandler.postDelayed(characterAdder, mDelay);
     }
 
+    public void showNotifications() {
+        MainActivity myActivity = (MainActivity) getActivity();
+
+        if (!holly6000ViewModel.isInternetAvailable()) {
+            Log.d("Log Planet", "noInternetConnectionWarning (logAction -> začátek)");
+            noInternetConnectionWarning();
+            return;
+        }
+
+        boolean[] currentBtnsState = myActivity.disableAllButtons();
+
+        startNotificationLoadingProgress();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, holly6000ViewModel.getAppScriptURL(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        stopNotificationLoadingProgress();
+
+                        myActivity.restoreButtonsState(currentBtnsState);
+
+                        String errorSubString = "<!DOC";
+                        int substringLengt = Math.min(response.length(), errorSubString.length());
+                        if ((response.equals("")) || (response.substring(0,substringLengt).equals(errorSubString.substring(0,substringLengt)))) {
+                            Log.d("Log Planet", "error message (loadGameData -> onResponse): " + response);
+                            noInternetConnectionWarning();
+                            return;
+                        }
+
+                        String notificationsToDispay = "";
+
+                        if (response.equals(",")) {
+                            notificationsToDispay = getResources().getString(R.string.no_news_text);
+                        } else {
+                            String[] notificationsString = response.split(",", -1);
+
+                            for (int i = 0; i < notificationsString.length; i += 2) {
+                                notificationsToDispay += notificationsString[i] + "\n" +
+                                        notificationsString[i + 1].replace(';', ',') + "\n\n";
+                            }
+                        }
+
+                        notificationsTV.setText(notificationsToDispay);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        stopNotificationLoadingProgress();
+                        myActivity.restoreButtonsState(currentBtnsState);
+                        Log.d("Log Planet", "networkProblemWarning (loadNotifications -> onErrorResponse)" + error.toString());
+                        //error.printStackTrace();
+                        noInternetConnectionWarning();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> parmas = new HashMap<>();
+
+                //here we pass params
+                parmas.put("action", "loadNotifications");
+
+                return parmas;
+            }
+        };
+
+        int socketTimeOut = 15000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+
+        stringRequest.setRetryPolicy(policy);
+
+        RequestQueue queue = Volley.newRequestQueue(myActivity);
+        queue.add(stringRequest);
+    }
+
     public void noInternetConnectionWarning() {
 
         holly6000ViewModel.setUserInputAwaited(true);
@@ -966,6 +997,17 @@ public class Holly6000TextDisplayFragment extends Fragment {
         promptET.setText("");
         textDisplaySV.post(() -> textDisplaySV.fullScroll(View.FOCUS_DOWN));
         holly6000ViewModel.setUserInputAwaited(false);
+    }
+
+    public void startNotificationLoadingProgress() {
+        notificationsTV.setVisibility(View.VISIBLE);
+        notificationsTV.setText(getResources().getString(R.string.holly6000_monitor_data_loading));
+        notificationsTV.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.holly6000_monitor_data_loading_animation));
+    }
+
+    public void stopNotificationLoadingProgress() {
+        notificationsTV.clearAnimation();
+        notificationsTV.setText("");
     }
 
     @Override

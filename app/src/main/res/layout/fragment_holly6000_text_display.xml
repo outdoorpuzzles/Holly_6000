@@ -1,92 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:id="@+id/holly6000TextDisplaySV"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".Holly6000TextDisplayFragment">
+    android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
+        android:id="@+id/holly6000TextDisplaySV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:context=".Holly6000TextDisplayFragment">
 
-        <TextView
-            android:id="@+id/holly6000TextDisplayTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/holly6000_monitor_font"
-
-            android:gravity="bottom"
-
-            android:text=""
-            android:textColor="@color/text_color"
-            android:textSize="16sp"
-
-            android:visibility="gone"
-
-            app:layout_constrainedHeight="true"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed"
-
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/holly6000PromptTV"
-
-            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
-        <TextView
-            android:id="@+id/holly6000PromptTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
 
-            android:fontFamily="@font/holly6000_monitor_font"
-            android:maxLines="1"
-            android:text=""
-            android:textColor="@color/text_color"
+            <TextView
+                android:id="@+id/holly6000TextDisplayTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/holly6000_monitor_font"
 
-            android:textSize="16sp"
+                android:gravity="bottom"
 
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/holly6000PromptET"
-            app:layout_constraintTop_toBottomOf="@id/holly6000TextDisplayTV"
-            app:layout_constraintBottom_toBottomOf="parent"
+                android:text=""
+                android:textColor="@color/text_color"
+                android:textSize="16sp"
 
-            />
+                android:visibility="gone"
 
-        <EditText
-            android:id="@+id/holly6000PromptET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintVertical_chainStyle="packed"
+
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/holly6000PromptTV"
+
+                />
 
 
-            android:fontFamily="@font/holly6000_monitor_font"
-            android:maxLines="1"
-            android:text=""
-            android:textColor="@color/text_color"
-            android:background="@null"
-            android:inputType="textNoSuggestions|textVisiblePassword"
+            <TextView
+                android:id="@+id/holly6000PromptTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
 
-            android:imeOptions="actionDone"
+                android:fontFamily="@font/holly6000_monitor_font"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/text_color"
 
-            android:textCursorDrawable="@drawable/cursor_drawable"
-            android:cursorVisible="true"
+                android:textSize="16sp"
 
-            android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/holly6000PromptET"
+                app:layout_constraintTop_toBottomOf="@id/holly6000TextDisplayTV"
+                app:layout_constraintBottom_toBottomOf="parent"
 
-            android:visibility="gone"
+                />
 
-            app:layout_constraintLeft_toRightOf="@id/holly6000PromptTV"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/holly6000TextDisplayTV"
+            <EditText
+                android:id="@+id/holly6000PromptET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
 
-            />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:fontFamily="@font/holly6000_monitor_font"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/text_color"
+                android:background="@null"
+                android:inputType="textNoSuggestions|textVisiblePassword"
 
-</ScrollView>
+                android:imeOptions="actionDone"
+
+                android:textCursorDrawable="@drawable/cursor_drawable"
+                android:cursorVisible="true"
+
+                android:textSize="16sp"
+
+                android:visibility="gone"
+
+                app:layout_constraintLeft_toRightOf="@id/holly6000PromptTV"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/holly6000TextDisplayTV"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/holly6000NotificationsTV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/holly6000_monitor_font"
+
+        android:gravity="top"
+
+        android:text=""
+        android:textColor="@color/text_color"
+        android:textSize="16sp"
+
+        android:background="@color/black"
+
+        android:scrollbars = "vertical"
+
+        android:visibility="invisible"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
